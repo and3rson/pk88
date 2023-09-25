@@ -2,11 +2,17 @@ GAL16V8
 Addr
 
 A8    A9    A10   A16   A17   A18   A19  /M     NC    GND
-/OE   NC    NC    NC    NC    NC   /VIA  /RAM  /ROM   VCC
+/OE   NC    NC    NC    NC    NC    LCD  /RAM  /ROM   VCC
 
+;; Memory
+; RAM: $00000-$7FFFF
 RAM =   M  * /A19
+; ROM: $F0000-$FFFFF
 ROM =   M  *  A16  *  A17  *  A18  *  A19
-VIA =  /M * /A8   * /A9   * /A10
+
+;; I/O
+; LCD: Ports $0000-$00FF
+LCD =  /M *  /A8   * /A9   * /A10
 
 DESCRIPTION
 Address decoder for Bandera88
