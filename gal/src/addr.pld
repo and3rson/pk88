@@ -1,8 +1,8 @@
 GAL16V8
 Addr
 
-A8    A9    A10   A16   A17   A18   A19  /M     NC    GND
-/OE   NC    NC    NC    NC    NC    LCD  /RAM  /ROM   VCC
+CLK   A8    A9    A10   A16   A17   A18   A19  /M     GND
+/OE   Q0    Q1    NC    NC    NC   /IO   /RAM  /ROM   VCC
 
 ;; Memory
 ; RAM: $00000-$7FFFF
@@ -11,8 +11,19 @@ RAM =   M  * /A19
 ROM =   M  *  A16  *  A17  *  A18  *  A19
 
 ;; I/O
-; LCD: Ports $0000-$00FF
-LCD =  /M *  /A8   * /A9   * /A10
+; 8255: Ports $0000-$00FF
+IO  =  /M *  /A8   * /A9   * /A10
+
+;; Clock - inverted modulo-3 counter, output (Q1) is inverted with 74HC00
+; +----+----+
+; | Q0 | Q1 |
+; +----+----+
+; | 1  | 1  |
+; | 0  | 1  |
+; | 0  | 0  |
+; +----+----+
+Q0.R = /Q0 * /Q1  ; Set to 1 only if Q0==0 && Q1==0
+Q1.R =  Q0 + /Q1  ; Set to 0 only if Q0==0 && Q1==1
 
 DESCRIPTION
 Address decoder for Bandera88
