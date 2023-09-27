@@ -4,7 +4,10 @@ all: $(BIN)
 
 %.bin: %.asm
 	nasm $< -o $@
-	ndisasm $@ -b 16 -o 0xF0000
+
+.PHONY: disasm
+disasm: $(BIN)
+	ndisasm $^ -b 16 -o 0xF0000
 
 .PHONY: clean
 clean:
