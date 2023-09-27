@@ -20,12 +20,12 @@ endless:
 	inc ax
 	jmp endless
 
-times 0x10000-($-START)-16 db 0xAD
+times 0x10000-($-START)-16 db 0xF4
 
 reset:
         jmp ROM_SEG:init
         hlt
 
-times 0x10000-($-START)-2 db 0xAD
+times 0x10000-($-START)-1 db 0xF4
 
         db "AD"
