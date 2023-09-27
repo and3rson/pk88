@@ -1,8 +1,8 @@
 GAL16V8
 Addr
 
-CLK   A8    A9    A10   A16   A17   A18   A19  /M     GND
-/OE   Q0    Q1    NC    NC    NC   /IO   /RAM  /ROM   VCC
+CLK   A8    A16   A17   A18   A19  /M    /RD   /WR    GND
+/OE   Q0    Q1    NC   /IO   /IN   /OUT  /RAM  /ROM   VCC
 
 ;; Memory
 ; RAM: $00000-$7FFFF
@@ -11,8 +11,11 @@ RAM =   M  * /A19
 ROM =   M  *  A16  *  A17  *  A18  *  A19
 
 ;; I/O
-; 8255: Ports $0000-$00FF
-IO  =  /M *  /A8   * /A9   * /A10
+; LED & DIP switches: $0000-$00FF
+OUT =  /M  *  /A8  *   WR
+IN  =  /M  *  /A8  *   RD
+; 8255: Ports $0100-$01FF
+IO  =  /M  *   A8
 
 ;; Clock - inverted modulo-3 counter, output (Q1) is inverted with 74HC00
 ; +----+----+
