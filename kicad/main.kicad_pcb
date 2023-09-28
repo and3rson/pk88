@@ -3898,7 +3898,7 @@
     (stroke (width 0.15) (type solid)) (fill solid) (layer "F.SilkS") (tstamp af3a3245-750d-4445-b9d1-97a9fabb251d))
   (gr_rect (start 15.24 -109.22) (end 134.62 -10.16)
     (stroke (width 0.2) (type default)) (fill none) (layer "Edge.Cuts") (tstamp 80e69f80-4399-475d-b702-cac767b75218))
-  (gr_text "Андрій Дунай\nv0.1, Вересень 2023\n<a@dun.ai>" (at 113.3475 -41.275) (layer "F.SilkS") (tstamp 5ad38310-c9cc-437a-9b8d-de470cd0f049)
+  (gr_text "Андрій Дунай\nv0.2, Вересень 2023\n<a@dun.ai>" (at 113.3475 -41.275) (layer "F.SilkS") (tstamp 5ad38310-c9cc-437a-9b8d-de470cd0f049)
     (effects (font (size 1 1) (thickness 0.15)) (justify left bottom))
   )
   (gr_text "88" (at 106.917171 -41.89348) (layer "F.SilkS" knockout) (tstamp 8405172c-0f36-4bf3-ba4b-8849ef777967)

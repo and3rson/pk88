@@ -4,6 +4,12 @@
 
   (paper "A3")
 
+  (title_block
+    (title "ПК-88")
+    (date "2023-09-28")
+    (rev "v0.2")
+  )
+
   (lib_symbols
     (symbol "74hc00_small:74HC00" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (at 6.35 8.89 0)
