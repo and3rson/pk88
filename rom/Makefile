@@ -14,5 +14,6 @@ clean:
 	rm -f *.bin
 
 .PHONY: program
-program:
+program: $(BIN)
+	# minipro -p SMJ27C512@DIP28 -w main.bin -S
 	minipro -p W27C512@DIP28 -w main.bin -S

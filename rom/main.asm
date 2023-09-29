@@ -9,15 +9,18 @@ STK_LEN equ 0x8000  ; 32 KB stack
         org ROM_SEG*16
 
 init:
-        mov ax, STK_SEG
-        mov ss, ax
-        mov ax, STK_LEN
-        mov sp, ax
-	mov ax, 0
-        sti
+ ;        mov ax, STK_SEG
+ ;        mov ss, ax
+ ;        mov ax, STK_LEN
+ ;        mov sp, ax
+	; mov ax, 0
+ ;        sti
 
+        xor dx, dx
 endless:
-	inc ax
+	; inc ax
+        in al, dx
+        out dx, al
 	jmp endless
 
 times 0x10000-($-START)-16 db 0xAD

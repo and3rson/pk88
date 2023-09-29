@@ -1,5 +1,6 @@
 SOURCES = $(wildcard src/*.pld)
 OBJECTS = $(SOURCES:.pld=.jed)
+PROGRAM = addr
 
 all: $(OBJECTS)
 

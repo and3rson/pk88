@@ -1,7 +1,7 @@
 GAL16V8
 Addr
 
-CLK   A8    A16   A17   A18   A19  /M    /RD   /WR    GND
+CLK   A8    A16   A17   A18   A19  /RD   /WR   /M     GND
 /OE   Q0    Q1    NC   /IO   /IN   /OUT  /RAM  /ROM   VCC
 
 ;; Memory
@@ -29,4 +29,4 @@ Q0.R = /Q0 * /Q1  ; Set to 1 only if Q0==0 && Q1==0
 Q1.R =  Q0 + /Q1  ; Set to 0 only if Q0==0 && Q1==1
 
 DESCRIPTION
-Address decoder for Bandera88
+Address decoder for PK88
