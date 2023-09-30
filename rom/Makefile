@@ -7,7 +7,7 @@ all: $(BIN)
 
 .PHONY: disasm
 disasm: $(BIN)
-	ndisasm $^ -b 16 -o 0xF0000
+	ndisasm $^ -b 16 -o 0xF0000 | less
 
 .PHONY: clean
 clean:
