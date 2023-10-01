@@ -17,9 +17,9 @@ IO_CTRL equ 0x103
 
         org ROM_SEG*16
 
-; HELLO_S db "Hello, KM1810VM88!", 0
+HELLO_S db "Hello, KM1810VM88!", 0
 ; HELLO_S db "0123456789012345678!", 0
-  HELLO_S db "8765432109876543210!", 0
+; HELLO_S db "8765432109876543210!", 0
 
 init:
         ; Initialize segments
@@ -159,7 +159,6 @@ loop:
         call lcd_busy
 
         mov ah, 1
-
         mov si, HELLO_S
 @printchar:
         mov al, [cs:si]
@@ -168,6 +167,21 @@ loop:
         call lcd_write
         call lcd_busy
         inc si
+        jmp @printchar
+
+        hlt
+
+;         xor al, al
+;         mov ah, 1
+; @printchar:
+;         call lcd_write
+;         call lcd_write
+;         call lcd_write
+;         call lcd_write
+;         ; call lcd_busy
+;         inc al
+;         cmp al, 0
+;         jne @printchar
 
 
 
@@ -194,9 +208,10 @@ lcd_write:
         mov bx, ax
 
         mov dx, IO_CTRL
-        in al, dx
-        and al, 0b11101111  ; Set port A to output
-        or al, 0b10000000  ; Mode set flag
+        ; in al, dx
+        ; and al, 0b11101111  ; Set port A to output
+        ; or al, 0b10000000  ; Mode set flag
+        mov al, 0b10000000
         out dx, al
 
         mov al, bl  ; Restore AL = data
@@ -256,8 +271,9 @@ lcd_read:
         mov bx, ax
 
         mov dx, IO_CTRL
-        in al, dx
-        or al, 0b10010000  ; Set port A to input
+        ; in al, dx
+        ; or al, 0b10010000  ; Set port A to input
+        mov al, 0b10010000
         out dx, al
 
         mov al, bl  ; Restore AL = data
