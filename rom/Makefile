@@ -1,13 +1,14 @@
-BIN = $(patsubst %.asm,%.bin,$(shell ls *.asm))
+TARGET = main.bin
+DEPS = $(shell find . -name '*.asm' -o -name '*.inc')
 
-all: $(BIN)
+all: $(TARGET)
 
-%.bin: %.asm
-	nasm $< -o $@
+%.bin: src/%.asm $(DEPS)
+	nasm -i src $< -o $@
 
 .PHONY: disasm
-disasm: $(BIN)
-	ndisasm $^ -b 16 -o 0xF0000
+disasm: $(TARGET)
+	ndisasm $^ -b 16 -o 0xF0000 | less
 
 .PHONY: clean
 clean:

@@ -22,22 +22,16 @@ init:
         ; Initialize I/O
         mov dx, IO_CTRL
         mov al, 0b10000000
-        ; 1   0   0   0   0   0   0   0
-        ; ^   ^   ^   ^   ^   ^   ^   ^
-        ; |   |   |   |   |   |   |   |
-        ; |   +-+-+   |   |   |   |   +-- 0: Port C (lower) is output
-        ; |     |     |   |   |   |
-        ; |     |     |   |   |   +------ 0: Port B is output
-        ; |     |     |   |   |
-        ; |     |     |   |   +---------- 0: Mode 0
-        ; |     |     |   |
-        ; |     |     |   +-------------- 0: Port C (upper) is output
-        ; |     |     |
-        ; |     |     +------------------ 0: Port A is output
-        ; |     |
-        ; |     +------------------------ 00: Mode 0
-        ; |
-        ; +------------------------------ 1: Mode set flag
+        ; 1 0 0 0 0 0 0 0
+        ; ^ ^ ^ ^ ^ ^ ^ ^
+        ; | | | | | | | |
+        ; | | | | | | | +-- 0: Port C (lower) is output
+        ; | +++ | | | +--- 0: Port B is output
+        ; |  |  | | +---- 0: Mode 0
+        ; |  |  | +----- 0: Port C (upper) is output
+        ; |  |  +------ 0: Port A is output
+        ; |  +------- 00: Mode 0
+        ; +---------- 1: Mode set flag
         out dx, al
 
         call lcd_init
