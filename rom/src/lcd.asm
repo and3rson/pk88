@@ -51,7 +51,6 @@ lcd_print:
         push si
 
         mov ah, 1
-        mov si, HELLO_S
 .next:
         mov al, [ds:si]
         cmp al, 0
