@@ -19,6 +19,9 @@ init:
         mov ax, STK_LEN
         mov sp, ax
 
+        mov ax, ROM_SEG
+        mov ds, ax
+
         ; Initialize I/O
         mov dx, IO_CTRL
         mov al, 0b10000000
