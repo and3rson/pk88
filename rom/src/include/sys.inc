@@ -1,3 +1,11 @@
+; =====================================================
+;
+; System constants
+;
+; This file is part of MetalBIOS for PK-88.
+;
+; =====================================================
+
 %ifndef SYS_INC
         %define SYS_INC
 

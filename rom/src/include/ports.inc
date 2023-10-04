@@ -1,3 +1,11 @@
+; =====================================================
+;
+; I/O port numbers
+;
+; This file is part of MetalBIOS for PK-88.
+;
+; =====================================================
+
 %ifndef PORTS_INC
         %define PORTS_INC
 
