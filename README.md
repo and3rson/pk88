@@ -1,5 +1,8 @@
 # PK88
+
 Single-board computer based on KM1810VM88 CPU (Ukrainian clone of Intel 8088).
+
+![Image 1](./img/v0_1_assembled1.jpg) ![Image 2](./img/v0_1_assembled2.jpg)
 
 PK stands for "Personalnii Kompyuter" ("Personal Computer") in Ukrainian.
 
