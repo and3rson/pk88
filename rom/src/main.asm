@@ -7,34 +7,34 @@
 ;
 ; =====================================================
 
-        cpu 8086
-        bits 16
+        cpu     8086
+        bits    16
 
         %include "include/sys.inc"
         %include "include/ports.inc"
 
-        org ROM_SEG*16
+        org     ROM_SEG*16
 
-START   equ $
+START   equ     $
 
-HELLO_S db "Hello, KM1810VM88!", 0
+HELLO_S db      "Hello, KM1810VM88!", 0
 
         %include "lcd.asm"
         %include "syscall.asm"
 
 init:
         ; Initialize segments
-        mov ax, STK_SEG
-        mov ss, ax
-        mov ax, STK_LEN
-        mov sp, ax
+        mov     ax, STK_SEG
+        mov     ss, ax
+        mov     ax, STK_LEN
+        mov     sp, ax
 
-        mov ax, ROM_SEG
-        mov ds, ax
+        mov     ax, ROM_SEG
+        mov     ds, ax
 
         ; Initialize I/O
-        mov dx, IO_CTRL
-        mov al, 0b10000000
+        mov     dx, IO_CTRL
+        mov     al, 0b10000000
         ; 1 0 0 0 0 0 0 0
         ; ^ ^ ^ ^ ^ ^ ^ ^
         ; | | | | | | | |
@@ -45,18 +45,18 @@ init:
         ; |  |  +------ 0: Port A is output
         ; |  +------- 00: Mode 0
         ; +---------- 1: Mode set flag
-        out dx, al
+        out     dx, al
 
-        call syscall_init
-        call lcd_init
+        call    syscall_init
+        call    lcd_init
 
         ; Ready!
 
         sti
 
-        mov ah, 0x01
-        mov si, HELLO_S
-        int 0x50
+        mov     ah, 0x01
+        mov     si, HELLO_S
+        int     0x50
         hlt
 
 ;         ; Delay 65536 iterations (~557 (524?) ms)
@@ -68,12 +68,13 @@ init:
 
 
 
-times 0x10000-($-START)-16 db 0xAD
+times 0x10000-($-START)-16 \
+        db      0xAD
 
 reset:
-        jmp ROM_SEG:init
+        jmp     ROM_SEG:init
         hlt
 
 times 0x10000-($-START)-2 db 0xAD
 
-        db "AD"
+        db      "AD"
