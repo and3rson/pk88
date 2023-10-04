@@ -1,3 +1,12 @@
+; =====================================================
+;
+; MetalBIOS - Base Input-Output System for PK-88
+;
+; Written by Andrew Dunai <a@dun.ai>
+; October 2023
+;
+; =====================================================
+
         cpu 8086
         bits 16
 
@@ -11,6 +20,7 @@ START   equ $
 HELLO_S db "Hello, KM1810VM88!", 0
 
         %include "lcd.asm"
+        %include "syscall.asm"
 
 init:
         ; Initialize segments
@@ -37,9 +47,16 @@ init:
         ; +---------- 1: Mode set flag
         out dx, al
 
+        call syscall_init
         call lcd_init
+
+        ; Ready!
+
+        sti
+
+        mov ah, 0x01
         mov si, HELLO_S
-        call lcd_print
+        int 0x50
         hlt
 
 ;         ; Delay 65536 iterations (~557 (524?) ms)

@@ -1,4 +1,10 @@
+; =====================================================
+;
 ; LCD functions
+;
+; This file is part of MetalBIOS for PK-88.
+;
+; =====================================================
 
         %include "include/ports.inc"
 
@@ -44,6 +50,7 @@ lcd_init:
         ret
 
 ; Print string to LCD
+;
 ; Args:
 ;   DS:SI - string
 lcd_print:
@@ -68,6 +75,7 @@ lcd_print:
 
 
 ; Write to LCD
+;
 ; Args:
 ;   AL - data
 ;   AH - register
@@ -112,6 +120,7 @@ lcd_write:
         ret
 
 ; Read from LCD
+;
 ; Args:
 ;   AH - register
 ;
