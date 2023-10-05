@@ -52,23 +52,23 @@ lcd_init:
 ; Print string to LCD
 ;
 ; Args:
-;   DS:SI - string
+;   ES:BP - string
 lcd_print:
         push    ax
-        push    si
+        push    bp
 
         mov     ah, 1
 .next:
-        mov     al, [ds:si]
+        mov     al, [es:bp]
         cmp     al, 0
         je      .done
         call    lcd_write
         call    lcd_busy
-        inc     si
+        inc     bp
         jmp     .next
 
 .done:
-        pop     si
+        pop     bp
         pop     ax
 
         ret

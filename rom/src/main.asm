@@ -20,7 +20,7 @@ START   equ     $
 HELLO_S db      "Hello, KM1810VM88!", 0
 
         %include "lcd.asm"
-        %include "syscall.asm"
+        %include "interrupt.asm"
 
 init:
         ; Initialize segments
@@ -47,16 +47,29 @@ init:
         ; +---------- 1: Mode set flag
         out     dx, al
 
-        call    syscall_init
+        call    interrupt_init
         call    lcd_init
 
         ; Ready!
 
         sti
 
-        mov     ah, 0x01
-        mov     si, HELLO_S
-        int     0x50
+        mov     ax, ROM_SEG
+        mov     es, ax
+        mov     ah, 0x13
+        mov     bp, HELLO_S
+        int     0x10
+
+;         xor     dx, dx
+;         mov     ds, dx
+; .again:
+;         xor     ax, ax
+;         in      al, dx
+;         mov     bx, ax
+;         mov     al, [ds:bx]
+;         out     dx, al
+;         jmp     .again
+
         hlt
 
 ;         ; Delay 65536 iterations (~557 (524?) ms)
