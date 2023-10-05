@@ -10,17 +10,24 @@
         cpu     8086
         bits    16
 
+        extern foo
+
         %include "include/sys.inc"
         %include "include/ports.inc"
 
-        org     ROM_SEG*16
+        extern interrupt_init
+        extern lcd_init
 
-START   equ     $
+        ; org     ROM_SEG*16
+
+        section .rodata
 
 HELLO_S db      "Hello, KM1810VM88!", 0
 
-        %include "lcd.asm"
-        %include "interrupt.asm"
+        ; %include "lcd.asm"
+        ; %include "interrupt.asm"
+
+        section .text
 
 init:
         ; Initialize segments
@@ -81,13 +88,14 @@ init:
 
 
 
-times 0x10000-($-START)-16 \
-        db      0xAD
+; times 0x10000-($-START)-16 \
+;         db      0xAD
 
+        section .reset
 reset:
         jmp     ROM_SEG:init
         hlt
 
-times 0x10000-($-START)-2 db 0xAD
+times 0x10-($-reset)-2 db 0xAD
 
         db      "AD"

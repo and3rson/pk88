@@ -6,13 +6,19 @@
 ;
 ; =====================================================
 
+        cpu     8086
+        bits    16
+
         %include "include/sys.inc"
 
         %include "int10h.asm"
         %include "int11h.asm"
         %include "int13h.asm"
 
+        section .text
+
 ; Init interrupt table
+        global  interrupt_init
 interrupt_init:
         push    bx
         push    cx

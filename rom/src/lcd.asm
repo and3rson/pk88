@@ -6,9 +6,15 @@
 ;
 ; =====================================================
 
+        cpu     8086
+        bits    16
+
         %include "include/ports.inc"
 
+        section .text
+
 ; Initialize LCD
+        global  lcd_init
 lcd_init:
         push    ax
         push    cx
@@ -53,6 +59,7 @@ lcd_init:
 ;
 ; Args:
 ;   ES:BP - string
+        global  lcd_print
 lcd_print:
         push    ax
         push    bp
@@ -79,6 +86,7 @@ lcd_print:
 ; Args:
 ;   AL - data
 ;   AH - register
+        global  lcd_write
 lcd_write:
         push    bx
         push    dx
@@ -167,6 +175,7 @@ lcd_read:
 
 
 ; Block while LCD is busy
+        global  lcd_busy
 lcd_busy:
         push    ax
         mov     ah, 0

@@ -6,6 +6,15 @@
 ;
 ; =====================================================
 
+        cpu     8086
+        bits    16
+
+        extern  lcd_write
+        extern  lcd_busy
+        extern  lcd_print
+
+        section .text
+
 ; BIOS 0x10 ISR
 ;
 ; Args:

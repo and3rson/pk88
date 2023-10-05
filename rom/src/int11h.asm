@@ -6,6 +6,9 @@
 ;
 ; =====================================================
 
+        cpu     8086
+        bits    16
+
 NUM_PRINTERS \
         equ     0  ; 2 bits
 INTERNAL_MODEM \
@@ -37,6 +40,7 @@ EQUIPMENT_LIST \
                 DISKETTES_PRESENT \
         )
 
+        section .text
 
 ; BIOS 0x11 ISR
 int11h_isr:
