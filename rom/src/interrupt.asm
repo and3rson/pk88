@@ -9,6 +9,8 @@
         %include "include/sys.inc"
 
         %include "int10h.asm"
+        %include "int11h.asm"
+        %include "int13h.asm"
 
 ; Init interrupt table
 interrupt_init:
@@ -65,9 +67,9 @@ isr_handlers:
         dw      isr_stub
         dw      isr_stub
         dw      int10h_isr      ; 0x10 - Video services
-        dw      isr_stub        ; 0x11 - Equipment list
+        dw      int11h_isr      ; 0x11 - Equipment list
         dw      isr_stub        ; 0x12 - Conventional memory size
-        dw      isr_stub        ; 0x13 - Low level disk services
+        dw      int13h_isr      ; 0x13 - Low-level disk services
         dw      isr_stub        ; 0x14 - Serial port services
         dw      isr_stub        ; 0x15 - Misc system services
         dw      isr_stub        ; 0x16 - Keyboard services

@@ -42,7 +42,7 @@ int10h_function_table:
         dw      set_border_color
         dw      write_graphics_pixel
         dw      read_graphics_pixel
-        dw      write_character_in_tty_mode
+        dw      write_character_in_tty_mode  ; !!!
         dw      get_video_mode
         dw      set_palette_registers  ; EGA, VGA, SVGA
         dw      character_generator  ; EGA, VGA, SVGA
@@ -119,7 +119,19 @@ read_graphics_pixel:
         ret
 
 ; Function 0Eh: Write character in TTY mode
+; Required by DOS 1.0
+;
+; Args:
+;   AH - function number (0x0E)
+;   AL - character
+;   BH - page number (ignored)
+;   BL - foreground color (ignored)
 write_character_in_tty_mode:
+        push    ax
+        mov     ah, 1
+        call    lcd_write
+        call    lcd_busy
+        pop     ax
         ret
 
 ; Function 0Fh: Get video mode
@@ -139,7 +151,10 @@ alternate_select_functions:
         ret
 
 ; Function 13h: Print string
+; TODO: Not used by DOS 1.0?
+;
 ; Args:
+;   AH - function number (0x13)
 ;   DS:SI - string
 write_string:
         call    lcd_print
@@ -157,16 +172,3 @@ get_functionality_information:
 ; Function 1Ch: Save or restore video state
 save_or_restore_video_state:
         ret
-
-
-; ; Function 0: Print char
-; ; Args:
-; ;   AL - char
-; print_char:
-;         push    ax
-;         mov     ah, 1
-;         call    lcd_write
-;         call    lcd_busy
-;         pop     ax
-;         ret
-;
