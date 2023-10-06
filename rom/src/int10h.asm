@@ -1,6 +1,6 @@
 ; =====================================================
 ;
-; Video interrupts (BIOS int 0x10)
+; Video functions (BIOS int 0x10)
 ;
 ; This file is part of MetalBIOS for PK-88.
 ;
@@ -39,23 +39,24 @@ int10h_isr:
 int10h_function_table:
         dw      set_video_mode
         dw      set_cursor_shape
-        dw      set_cursor_position
-        dw      get_cursor_position_and_shape
+        dw      set_cursor_position  ; ELKS
+        dw      get_cursor_position_and_shape  ; ELKS
         dw      get_light_pen_position
-        dw      set_display_page
-        dw      scroll_screen_up
-        dw      scroll_screen_down
+        dw      set_display_page  ; ELKS
+        dw      scroll_screen_up  ; ELKS
+        dw      scroll_screen_down  ; ELKS
         dw      read_character_and_attribute_at_cursor
-        dw      write_character_and_attribute_at_cursor
+        dw      write_character_and_attribute_at_cursor  ; ELKS
         dw      write_character_only_at_cursor
         dw      set_border_color
         dw      write_graphics_pixel
         dw      read_graphics_pixel
-        dw      write_character_in_tty_mode  ; !!!
-        dw      get_video_mode
+        dw      write_character_in_tty_mode  ; ELKS, DOS
+        dw      get_video_mode  ; ELKS
+
         dw      set_palette_registers  ; EGA, VGA, SVGA
         dw      character_generator  ; EGA, VGA, SVGA
-        dw      alternate_select_functions  ; EGA, VGA, SVGA
+        dw      alternate_select_functions  ; EGA, VGA, SVGA (ELKS - get EGA video config?)
         dw      write_string  ; Function 0x13: Print string
         dw      int10h_nop
         dw      int10h_nop
@@ -63,9 +64,12 @@ int10h_function_table:
         dw      int10h_nop
         dw      int10h_nop
         dw      int10h_nop
-        dw      get_or_set_display_combination_code  ; VGA, SVGA
+        dw      get_or_set_display_combination_code  ; VGA, SVGA (ELKS - get VGA video config?)
         dw      get_functionality_information  ; VGA, SVGA
         dw      save_or_restore_video_state  ; VGA, SVGA
+        dw      int10h_nop
+        dw      int10h_nop
+        dw      int10h_nop
 
 ; No-op (unimplemented) function
 int10h_nop:

@@ -1,6 +1,6 @@
 ; =====================================================
 ;
-; Low-level disk services (BIOS int 0x13)
+; Low-level disk functions (BIOS int 0x13)
 ;
 ; This file is part of MetalBIOS for PK-88.
 ;
@@ -10,6 +10,8 @@
         bits    16
 
         %include "disk.inc"
+
+        extern  disk_chs_to_lba
 
         section .text
 
@@ -36,12 +38,16 @@ int13h_isr:
 
 int13h_function_table:
         ; https://en.wikipedia.org/wiki/INT_13H#List_of_INT_13h_services
-        dw      reset_disk_system
+        dw      reset_disk_system  ; ELKS
         dw      get_status_of_last_drive_operation
-        dw      read_sectors_from_drive
-        dw      write_sectors_to_drive
+        dw      read_sectors_from_drive  ; ELKS
+        dw      write_sectors_to_drive  ; ELKS
         dw      int13h_nop
-        ; TODO: Implement the rest
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      read_drive_parameters  ; ELKS
+        ; TODO: Implement the rest?
 
 ; No-op (unimplemented) function
 int13h_nop:
@@ -68,18 +74,6 @@ get_status_of_last_drive_operation:
 
 ; Function 02h: Read sectors from drive
 ;
-; CX =       ---CH--- ---CL---
-; cylinder : 76543210 98
-; sector   :            543210;
-;
-; cylinder = CL << 8 | CH
-; sector   = CL & 0b00111111
-;
-;
-; CX := ( ( cylinder and 255 ) shl 8 ) or ( ( cylinder and 768 ) shr 2 ) or sector;
-; cylinder := ( (CX and $FF00) shr 8 ) or ( (CX and $C0) shl 2)
-; sector := CX and 63;
-;
 ; Args:
 ;   AH - function number (0x02)
 ;   AL - number of sectors to read
@@ -101,7 +95,7 @@ read_sectors_from_drive:
         ; Calculate LBA
         ; TODO: Use DL to determine drive type?
         push    ax
-        call    chs_to_lba
+        call    disk_chs_to_lba
         pop     cx
         xor     ch, ch
         ; AX = LBA, CX = number of sectors to read
@@ -137,7 +131,7 @@ write_sectors_to_drive:
         ; Calculate LBA
         ; TODO: Use DL to determine drive type?
         push    ax
-        call    chs_to_lba
+        call    disk_chs_to_lba
         pop     cx
         xor     ch, ch
         ; AX = LBA, CX = number of sectors to write
@@ -150,57 +144,27 @@ write_sectors_to_drive:
 
         ret
 
-; Convert CHS to LBA while respecting the 1024 cylinder limit (upper 2 bits of CL)
-; Supports disks up to 32GiB in size (65535 LBA sectors)
-;
-; Formula: LBA = (cylinder * HEADS + head) * SECTORS + sector - 1
+; Function 08h: Read drive parameters
 ;
 ; Args:
-;   CH - cylinder number
-;   CL - sector number (starting at 1)
-;   DH - head number
+;   AH - function number (0x08)
+;   DL - drive number (0x00 = floppy, 0x80 = hard disk)
 ;
 ; Return:
-;   AX - LBA
-chs_to_lba:
-        push    cx
-
-        ; AX = cylinder
-        xchg    ch, cl          ; CX = 98xxxxxx 76543210
-        and     ch, 0b11000000  ; CX = 98000000 76543210
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1           ; CX = 00000098 76543210 (
-        clc
-        mov     ax, cx          ; AX = cylinder number
-
-        ; AX = cylinder * HEADS
-        mov     cx, DISK_HEADS
-        push    dx
-        mul     cx  ; clobbers DX, never overflows
-        pop     dx
-
-        ; AX = (cylinder * HEADS) + head
-        xor     cx, cx
-        mov     cl, dh
-        add     ax, cx
-
-        ; AX = (cylinder * HEADS + head) * SECTORS
-        mov     cx, DISK_SECTORS
-        push    dx
-        mul     cx  ; clobbers DX, never overflows
-        pop     dx
-
-        ; AX = (cylinder * HEADS + head) * SECTORS + sector
-        pop     cx
-        push    cx
-        and     cx, 0x003F
-        dec     cl
-        add     ax, cx
-
-        pop     cx
-
-        ret
+;   Carry flag set on error
+;   AH - status code
+;   DL - number of hard disk drives
+;   DH - logical last index of heads (count - 1)
+;   CX - logical last index of cylinders (count - 1) and sectors (count)
+;       Cylinder count = CX[7:6][15:8]
+;       Sector count = CL[5:0]
+;   BL - drive type (only AT/PS2 floppies)
+read_drive_parameters:
+        mov     ah, -1
+        lodsb
+        mov     cx, \
+                        (DISK_CYLINDER_LAST & 0xFF) << 8 | \
+                        DISK_CYLINDER_LAST >> 2 & 0xC0 | DISK_SECTOR_LAST
+        mov     dh, DISK_HEAD_LAST
+        mov     dl, -1
+        mov     bl, -1

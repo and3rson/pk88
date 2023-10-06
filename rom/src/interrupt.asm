@@ -13,7 +13,9 @@
 
         extern  int10h_isr
         extern  int11h_isr
+        extern  int12h_isr
         extern  int13h_isr
+        extern  int16h_isr
 
         section .text
 
@@ -73,11 +75,11 @@ isr_handlers:
         dw      isr_stub
         dw      int10h_isr      ; 0x10 - Video services
         dw      int11h_isr      ; 0x11 - Equipment list
-        dw      isr_stub        ; 0x12 - Conventional memory size
+        dw      int12h_isr      ; 0x12 - Conventional memory size
         dw      int13h_isr      ; 0x13 - Low-level disk services
         dw      isr_stub        ; 0x14 - Serial port services
         dw      isr_stub        ; 0x15 - Misc system services
-        dw      isr_stub        ; 0x16 - Keyboard services
+        dw      int16h_isr      ; 0x16 - Keyboard services
         dw      isr_stub        ; 0x17 - Printer services
         dw      isr_stub        ; 0x18 - Execute Casette BASIC
         dw      isr_stub        ; 0x19 - Soft reboot
