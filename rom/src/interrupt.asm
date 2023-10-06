@@ -9,11 +9,11 @@
         cpu     8086
         bits    16
 
-        %include "include/sys.inc"
+        %include "sys.inc"
 
-        %include "int10h.asm"
-        %include "int11h.asm"
-        %include "int13h.asm"
+        extern  int10h_isr
+        extern  int11h_isr
+        extern  int13h_isr
 
         section .text
 

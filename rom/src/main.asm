@@ -12,8 +12,8 @@
 
         extern foo
 
-        %include "include/sys.inc"
-        %include "include/ports.inc"
+        %include "sys.inc"
+        %include "ports.inc"
 
         extern interrupt_init
         extern lcd_init

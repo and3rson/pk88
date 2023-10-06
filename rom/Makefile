@@ -1,26 +1,36 @@
-TARGET = bin/main.bin
-SRC = $(shell find . -name '*.asm')
-OBJ = $(patsubst %.asm,%.o,$(SRC))
-ELF = $(patsubst %.bin,%.elf,$(TARGET))
+DESTDIR = bin
+TARGET = $(DESTDIR)/main.bin
 LDCONFIG = main.ld
-DEPS = $(shell find . -name '*.inc') $(MAKEFILE_LIST) $(LDCONFIG)
+
+SRCDIR = src
+INCDIR = include
+
+ELF = $(patsubst %.bin,%.elf,$(TARGET))
+SRC = $(shell find $(SRCDIR) -name '*.asm')
+OBJ = $(patsubst %.asm,%.o,$(SRC))
+DEPS = $(shell find $(INCDIR) -name '*.inc') $(MAKEFILE_LIST) $(LDCONFIG)
+
+ASFLAGS = -i $(INCDIR) -f elf -g -F dwarf -w+gnu-elf-extensions
+LDFLAGS = -m elf_i386 -T $(LDCONFIG)
+
+AS = nasm
+LD = ld
+OBJCOPY = objcopy
 
 all: $(TARGET)
 
 $(TARGET): $(ELF)
-	@# ld -m elf_i386 -Ttext=0xF000 --section-start=.rodata=0xF000 --section-start=.reset=0xFFF0 --oformat binary -o $@ $^
-	objcopy -O binary $^ $@
+	$(OBJCOPY) -O binary $< $@
 
 $(ELF): $(OBJ)
-	ld -m elf_i386 -T $(LDCONFIG) -o $@ $^
+	@mkdir -p $(DESTDIR)
+	$(LD) $(LDFLAGS) -o $@ $^
 
-src/%.o: src/%.asm $(DEPS)
-	nasm -i src $< -f elf -g -F dwarf -w+gnu-elf-extensions -o $@
+$(SRCDIR)/%.o: $(SRCDIR)/%.asm $(DEPS)
+	$(AS) $(ASFLAGS) $< -o $@
 
 .PHONY: disasm
-# disasm: $(TARGET)
-disasm:
-	# ndisasm bin/main.bin -b 16 -o 0xF0000 | less
+disasm: $(TARGET)
 	unbuffer objdump -SDr $(ELF) -M i8086,intel | less -R
 
 .PHONY: clean

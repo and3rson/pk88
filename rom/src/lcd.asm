@@ -9,7 +9,7 @@
         cpu     8086
         bits    16
 
-        %include "include/ports.inc"
+        %include "ports.inc"
 
         section .text
 

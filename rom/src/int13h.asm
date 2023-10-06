@@ -15,6 +15,7 @@
 ;
 ; Args:
 ;   AH - function number
+global  int13h_isr
 int13h_isr:
         push    bx  ; Save BX to perform pointer arithmetic
 
