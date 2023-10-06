@@ -28,8 +28,7 @@ int10h_isr:
 
         ; Load int10h_function_table with BX*2 offset into BX
         shl     bx, 1
-        add     bx, int10h_function_table
-        mov     bx, [cs:bx]
+        mov     bx, [cs:bx+int10h_function_table]
 
         call    bx  ; Call appropriate function
 

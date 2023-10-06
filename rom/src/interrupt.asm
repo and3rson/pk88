@@ -35,8 +35,7 @@ interrupt_init:
         ; Load ISR address into BX
         mov     bx, cx
         shl     bx, 1
-        add     bx, isr_handlers
-        mov     bx, [cs:bx]
+        mov     bx, [cs:bx+isr_handlers]
         ; Write ISR segment and offset
         mov     [di], bx
         mov     [di + 2], cs

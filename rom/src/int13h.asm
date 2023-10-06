@@ -9,6 +9,8 @@
         cpu     8086
         bits    16
 
+        %include "disk.inc"
+
         section .text
 
 ; BIOS 0x13 ISR
@@ -24,8 +26,7 @@ int13h_isr:
 
         ; Load int13h_function_table with BX*2 offset into BX
         shl     bx, 1
-        add     bx, int13h_function_table
-        mov     bx, [cs:bx]
+        mov     bx, [cs:bx+int13h_function_table]
 
         call    bx  ; Call appropriate function
 
@@ -93,55 +94,25 @@ get_status_of_last_drive_operation:
 ;  AH - status code
 ;  AL - number of sectors read
 read_sectors_from_drive:
+        push    bx
         push    cx
+        push    dx
 
-        ; Calculate cylinder
-        xchg    ch, cl          ; CX = 98xxxxxx 76543210
-        and     ch, 0b11000000  ; CX = 98000000 76543210
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1           ; CX = 00000098 76543210 (
-        clc
-
-        ; Calculate sector
-
+        ; Calculate LBA
+        ; TODO: Use DL to determine drive type?
+        push    ax
+        call    chs_to_lba
         pop     cx
+        xor     ch, ch
+        ; AX = LBA, CX = number of sectors to read
 
-        ; TODO
+        ; TODO: Read sectors from uSD card
 
-        ret
-
-; Convert CHS to LBA while respecting the 1024 cylinder limit (upper 2 bits of CL)
-;
-; Args:
-;   CH - cylinder number
-;   CL - sector number (starting at 1)
-;   DH - head number
-;
-; Return:
-;   AX - LBA (low word)
-;   BX - LBA (high word)
-chs_to_lba:
-        ; Calculate cylinder
-        xchg    ch, cl          ; CX = 98xxxxxx 76543210
-        and     ch, 0b11000000  ; CX = 98000000 76543210
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1
-        ror     ch, 1           ; CX = 00000098 76543210 (
-        clc
-        mov     ax, cx
-
-        ; TODO
+        pop     dx
+        pop     cx
+        pop     bx
 
         ret
-
-
 
 ; Function 03h: Write sectors to drive
 ;
@@ -159,4 +130,77 @@ chs_to_lba:
 ;   AH - status code
 ;   AL - number of sectors written
 write_sectors_to_drive:
+        push    bx
+        push    cx
+        push    dx
+
+        ; Calculate LBA
+        ; TODO: Use DL to determine drive type?
+        push    ax
+        call    chs_to_lba
+        pop     cx
+        xor     ch, ch
+        ; AX = LBA, CX = number of sectors to write
+
+        ; TODO: Read sectors from uSD card
+
+        pop     dx
+        pop     cx
+        pop     bx
+
+        ret
+
+; Convert CHS to LBA while respecting the 1024 cylinder limit (upper 2 bits of CL)
+; Supports disks up to 32GiB in size (65535 LBA sectors)
+;
+; Formula: LBA = (cylinder * HEADS + head) * SECTORS + sector - 1
+;
+; Args:
+;   CH - cylinder number
+;   CL - sector number (starting at 1)
+;   DH - head number
+;
+; Return:
+;   AX - LBA
+chs_to_lba:
+        push    cx
+
+        ; AX = cylinder
+        xchg    ch, cl          ; CX = 98xxxxxx 76543210
+        and     ch, 0b11000000  ; CX = 98000000 76543210
+        ror     ch, 1
+        ror     ch, 1
+        ror     ch, 1
+        ror     ch, 1
+        ror     ch, 1
+        ror     ch, 1           ; CX = 00000098 76543210 (
+        clc
+        mov     ax, cx          ; AX = cylinder number
+
+        ; AX = cylinder * HEADS
+        mov     cx, DISK_HEADS
+        push    dx
+        mul     cx  ; clobbers DX, never overflows
+        pop     dx
+
+        ; AX = (cylinder * HEADS) + head
+        xor     cx, cx
+        mov     cl, dh
+        add     ax, cx
+
+        ; AX = (cylinder * HEADS + head) * SECTORS
+        mov     cx, DISK_SECTORS
+        push    dx
+        mul     cx  ; clobbers DX, never overflows
+        pop     dx
+
+        ; AX = (cylinder * HEADS + head) * SECTORS + sector
+        pop     cx
+        push    cx
+        and     cx, 0x003F
+        dec     cl
+        add     ax, cx
+
+        pop     cx
+
         ret
