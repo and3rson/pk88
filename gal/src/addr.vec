@@ -1,0 +1,51 @@
+@ RAM/ROM test
+< A19 A18 A17 A16 /RD /WR /M
+> /RAM /ROM
+
+0000 11 1  # Disable memory
+0000 11 0  # RAM starts @ 0x0000...
+0001 11 0
+0010 11 0
+0011 11 0
+0100 11 0
+0101 11 0
+0110 11 0
+0111 11 0  # ...and ends @ 0x7FFF
+1000 11 0  # (0x8000-0xEFFF unused)
+1001 11 0
+1010 11 0
+1011 11 0
+1100 11 0
+1101 11 0
+1110 11 0
+1111 11 0  # ROM lives @ 0xF0000
+
+@ I/O ports test
+< A8 /RD /WR /M
+> /IN /OUT /IO
+0 11 1
+0 01 1  # Input  port 0x000
+0 10 1  # Output port 0x000
+1 01 1  # Input  port 0x100
+1 10 1  # Output port 0x100
+
+@ Clock test
+< RST
+> Q0 Q1 TMCK
+
+1
+# Q1 is 66% duty-cycle clock, TMCK is Q1 / 2
+0  # Enable clock
+0
+0
+0
+0
+0
+0
+1  # Trigger reset
+0
+0
+0
+0
+0
+0
