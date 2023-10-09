@@ -1,7 +1,7 @@
 GAL16V8
 IO.deco
 
-A0    A1    A2    A3    A4    A5    A6    A7    A8    GND
+A8    A7    A6    A5    A4    A3    A2    A1    A0    GND
 A9   /M     NC    NC   /LCD  /PIC  /UART /PIT  /PPI   VCC
 
 ; 8255 PPI:  00000000xx (0x00-0x03)

@@ -84,7 +84,7 @@
     (property "Value" "T6963C" (at 10.16 26.67 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "" (at 0 25.4 0)
+    (property "Footprint" "footprints:LCD24064" (at 0 25.4 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.sparkfun.com/datasheets/LCD/Monochrome/Datasheet-T6963C.pdf" (at 0 27.94 0)
