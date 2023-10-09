@@ -1,5 +1,6 @@
 SOURCES = $(wildcard src/*.pld)
 OBJECTS = $(SOURCES:.pld=.jed)
+TESTS = $(SOURCES:.pld=.vec)
 
 all: $(OBJECTS)
 
@@ -10,6 +11,14 @@ src/%.jed: src/%.pld
 clean:
 	rm -f bin/*
 	rm -f src/*.jed src/*.fus src/*.chp src/*.pin src/*.hex src/*.lgc
+
+.PHONY: test
+test: $(SRC)
+	@for test in $(TESTS); do \
+		echo "*** $$test"; \
+		ginger $${test%.*}.pld $$test; \
+		echo; \
+	done
 
 .PHONY: program
 program: src/$(PROGRAM).jed

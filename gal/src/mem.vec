@@ -1,0 +1,49 @@
+@ RAM/ROM test
+< A19 A18 A17 A16 /M
+> /LORAM /HIRAM /ROM
+
+0000 1  # Disable memory
+? /LORAM=1 /HIRAM=1 /ROM=1
+0000 0  # Low RAM starts @ 0x0000...
+? /LORAM=0 /HIRAM=1 /ROM=1
+0001 0
+0010 0
+0011 0
+0100 0
+0101 0
+0110 0
+0111 0  # ...and ends @ 0x7FFF
+? /LORAM=0 /HIRAM=1 /ROM=1
+1000 0  # High RAM starts @ 0x8000
+? /LORAM=1 /HIRAM=0 /ROM=1
+1001 0
+1010 0
+1011 0
+1100 0
+1101 0
+1110 0  # ...and ends @ 0xEFFF
+? /LORAM=1 /HIRAM=0 /ROM=1
+1111 0  # ROM lives @ 0xF0000
+? /LORAM=1 /HIRAM=1 /ROM=0
+
+@ Clock test
+< RST
+> Q0 Q1 TMCK
+
+1
+# Q1 is 66% duty-cycle clock, TMCK is Q1 / 2
+0  # Enable clock
+0
+0
+0
+0
+0
+0
+1  # Trigger reset
+0
+0
+0
+0
+0
+0
+
