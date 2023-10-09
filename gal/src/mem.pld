@@ -1,8 +1,8 @@
 GAL16V8
 Mem.Deco
 
-CLK    A16    A17    A18    A19   /M      NC     NC    NC     GND
-/OE    TMCK   Q1     Q0     NC    /ROM   /LORAM /HIRAM NC     VCC
+CLK    A16    A17    A18    A19   /M      NC     NC     NC     GND
+/OE    NC     NC    /HIRAM /LORAM /ROM    Q0     Q1     TMCK   VCC
 
 ;; Memory
 ; RAM: $00000-$7FFFF
