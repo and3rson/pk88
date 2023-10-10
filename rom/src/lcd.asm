@@ -6,9 +6,15 @@
 ;
 ; =====================================================
 
-        %include "include/ports.inc"
+        cpu     8086
+        bits    16
+
+        %include "ports.inc"
+
+        section .text
 
 ; Initialize LCD
+        global  lcd_init
 lcd_init:
         push    ax
         push    cx
@@ -52,23 +58,24 @@ lcd_init:
 ; Print string to LCD
 ;
 ; Args:
-;   DS:SI - string
+;   ES:BP - string
+        global  lcd_print
 lcd_print:
         push    ax
-        push    si
+        push    bp
 
         mov     ah, 1
 .next:
-        mov     al, [ds:si]
+        mov     al, [es:bp]
         cmp     al, 0
         je      .done
         call    lcd_write
         call    lcd_busy
-        inc     si
+        inc     bp
         jmp     .next
 
 .done:
-        pop     si
+        pop     bp
         pop     ax
 
         ret
@@ -79,6 +86,7 @@ lcd_print:
 ; Args:
 ;   AL - data
 ;   AH - register
+        global  lcd_write
 lcd_write:
         push    bx
         push    dx
@@ -167,6 +175,7 @@ lcd_read:
 
 
 ; Block while LCD is busy
+        global  lcd_busy
 lcd_busy:
         push    ax
         mov     ah, 0
