@@ -11,6 +11,7 @@
 
         %include "sys.inc"
 
+        extern  int08h_isr
         extern  int10h_isr
         extern  int11h_isr
         extern  int12h_isr
@@ -65,11 +66,12 @@ isr_handlers:
         dw      isr_stub        ; 0x05 - Shift-PrtScr
         dw      isr_stub
         dw      isr_stub
-        dw      isr_stub        ; 0x08 - RTC
-        dw      isr_stub        ; 0x09 - Keyboard
+        ; IRQ0..IRQ7
+        dw      int08h_isr      ; IRQ0 - RTC
+        dw      isr_stub        ; IRQ1 - Keyboard
         dw      isr_stub
         dw      isr_stub
-        dw      isr_stub
+        dw      isr_stub        ; IRQ4 - Serial port
         dw      isr_stub
         dw      isr_stub
         dw      isr_stub

@@ -1,16 +1,16 @@
 ; =====================================================
 ;
-; System constants
+; RTC handler stub (called by int 08h)
 ;
 ; This file is part of MetalBIOS for PK-88.
 ;
 ; =====================================================
 
-%ifndef SYS_INC
-        %define SYS_INC
+        cpu     8086
+        bits    16
 
-ROM_SEG equ 0xF000
-STK_SEG equ 0x7800
-STK_LEN equ 0x8000  ; 32 KB stack
-
-%endif
+; BIOS 0x1C ISR
+global  int1Ch_isr
+int1Ch_isr:
+        ; no-op
+        iret
