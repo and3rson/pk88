@@ -1,15 +1,16 @@
 GAL16V8
 Mem.Deco
 
-CLK    A16    A17    A18    A19   /M      NC     NC     NC     GND
+CLK    A16    A17    A18    A19   /M      MCB    NC     NC     GND
 /OE    NC     NC    /HIRAM /LORAM /ROM    Q0     Q1     TMCK   VCC
 
 ;; Memory
-; RAM: $00000-$7FFFF
+; Low RAM:  $00000..$7FFFF
 LORAM =   M  * /A19
+; High RAM: $80000..($EFFFF if MCB==0 else $FFFFF)
 HIRAM =   M  *  A19  * /ROM
-; ROM: $F0000-$FFFFF
-ROM   =   M  *  A16  *  A17  *  A18  *  A19
+; ROM:      $F0000..$FFFFF (disabled if MCB==1)
+ROM   =   M  *  A16  *  A17  *  A18  *  A19  * /MCB
 
 ;; Q1 - CPU clock, inverted modulo-3 counter, output (Q1) is inverted with 74HC14
 ;; TMCK - 8253 timer clock, inverted modulo-2 counter of Q0, output (TMCK) is inverted with 74HC14
