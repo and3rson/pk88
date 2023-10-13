@@ -15,8 +15,10 @@ MEMORY  equ     640
 
         section .text
 
+; --------------------------------------------------
 ; BIOS 0x12 ISR
-global  int12h_isr
+; --------------------------------------------------
+        global  int12h_isr
 int12h_isr:
         mov     ax, MEMORY
 

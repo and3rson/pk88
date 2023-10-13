@@ -6,6 +6,14 @@
 ;
 ; =====================================================
 
+        cpu     8086
+        bits    16
+
+        %include "disk.inc"
+
+        section .text
+
+; --------------------------------------------------
 ; Convert CHS to LBA while respecting the 1024 cylinder limit (upper 2 bits of CL)
 ; Supports disks up to 32GiB in size (65535 LBA sectors)
 ;
@@ -16,7 +24,7 @@
 ; sector   = CL & 0b00111111
 ;
 ; Formula: LBA = (cylinder * HEADS + head) * SECTORS + sector - 1
-;
+; --------------------------------------------------
 ; Args:
 ;   CH - cylinder number
 ;   CL - sector number (starting at 1)
@@ -24,15 +32,7 @@
 ;
 ; Return:
 ;   AX - LBA
-
-        cpu     8086
-        bits    16
-
-        %include "disk.inc"
-
-        section .text
-
-global disk_chs_to_lba
+        global  disk_chs_to_lba
 disk_chs_to_lba:
         push    cx
 

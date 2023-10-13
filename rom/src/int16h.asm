@@ -15,11 +15,12 @@
 
         section .text
 
+; --------------------------------------------------
 ; BIOS 0x16 ISR
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number
-global  int16h_isr
+        global  int16h_isr
 int16h_isr:
         push    bx  ; Save BX to perform pointer arithmetic
 
@@ -46,20 +47,24 @@ int16h_function_table:
         dw      int16h_nop
         dw      int16h_nop
 
+; --------------------------------------------------
 ; No-op (unimplemented) function
+; --------------------------------------------------
 int16h_nop:
         ret
 
+; --------------------------------------------------
 ; Function 0x00 - Wait for keypress, halt until pressed
-;
+; --------------------------------------------------
 ; Returns:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special key
 wait_for_keypress:
         ret
 
+; --------------------------------------------------
 ; Function 0x01 - Peek character from keyboard buffer
-;
+; --------------------------------------------------
 ; Returns:
 ;   ZF - 0 if a key is pressed (even Ctrl-Break)
 ;   AX - 0 if no scan code is available

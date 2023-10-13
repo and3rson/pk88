@@ -9,8 +9,10 @@
         cpu     8086
         bits    16
 
+; --------------------------------------------------
 ; BIOS 0x1C ISR
-global  int1Ch_isr
+; --------------------------------------------------
+        global  int1Ch_isr
 int1Ch_isr:
         ; no-op
         iret

@@ -20,7 +20,9 @@
 
         section .text
 
+; --------------------------------------------------
 ; Init interrupt table
+; --------------------------------------------------
         global  interrupt_init
 interrupt_init:
         push    bx

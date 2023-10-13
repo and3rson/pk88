@@ -14,11 +14,12 @@
 
         section .text
 
+; --------------------------------------------------
 ; BIOS 0x10 ISR
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number
-global  int10h_isr
+        global  int10h_isr
 int10h_isr:
         push    bx  ; Save BX to perform pointer arithmetic
 
@@ -70,69 +71,100 @@ int10h_function_table:
         dw      int10h_nop
         dw      int10h_nop
 
+; --------------------------------------------------
 ; No-op (unimplemented) function
+; --------------------------------------------------
 int10h_nop:
         ret
 
+; --------------------------------------------------
 ; Function 00h: Set video mode
+; --------------------------------------------------
 set_video_mode:
         ret
 
+; --------------------------------------------------
 ; Function 01h: Set cursor shape
+; --------------------------------------------------
 set_cursor_shape:
         ret
 
+; --------------------------------------------------
 ; Function 02h: Set cursor position
+; --------------------------------------------------
 set_cursor_position:
         ret
 
+; --------------------------------------------------
 ; Function 03h: Get cursor position and shape
+; --------------------------------------------------
 get_cursor_position_and_shape:
         ret
 
+; --------------------------------------------------
 ; Function 04h: Get light pen position
+; --------------------------------------------------
 get_light_pen_position:
         ret
 
+; --------------------------------------------------
 ; Function 05h: Set display page
+; --------------------------------------------------
 set_display_page:
         ret
 
+; --------------------------------------------------
 ; Function 06h: Scroll screen up
+; --------------------------------------------------
 scroll_screen_up:
         ret
 
+; --------------------------------------------------
 ; Function 07h: Scroll screen down
+; --------------------------------------------------
 scroll_screen_down:
         ret
 
+; --------------------------------------------------
 ; Function 08h: Read character and attribute at cursor
+; --------------------------------------------------
 read_character_and_attribute_at_cursor:
         ret
 
+; --------------------------------------------------
 ; Function 09h: Write character and attribute at cursor
+; --------------------------------------------------
 write_character_and_attribute_at_cursor:
         ret
 
+; --------------------------------------------------
 ; Function 0Ah: Write character only at cursor
+; --------------------------------------------------
 write_character_only_at_cursor:
         ret
 
+; --------------------------------------------------
 ; Function 0Bh: Set border color
+; --------------------------------------------------
 set_border_color:
         ret
 
+; --------------------------------------------------
 ; Function 0Ch: Write graphics pixel
+; --------------------------------------------------
 write_graphics_pixel:
         ret
 
+; --------------------------------------------------
 ; Function 0Dh: Read graphics pixel
+; --------------------------------------------------
 read_graphics_pixel:
         ret
 
+; --------------------------------------------------
 ; Function 0Eh: Write character in TTY mode
 ; Required by DOS 1.0
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number (0x0E)
 ;   AL - character
@@ -142,25 +174,34 @@ write_character_in_tty_mode:
         call    lcd_printchar
         ret
 
+; --------------------------------------------------
 ; Function 0Fh: Get video mode
+; --------------------------------------------------
 get_video_mode:
         ret
 
+; --------------------------------------------------
 ; Function 10h: Set palette registers
+; --------------------------------------------------
 set_palette_registers:
         ret
 
+; --------------------------------------------------
 ; Function 11h: Character generator
+; --------------------------------------------------
 character_generator:
         ret
 
+; --------------------------------------------------
 ; Function 12h: Alternate select functions
+; --------------------------------------------------
 alternate_select_functions:
         ret
 
+; --------------------------------------------------
 ; Function 13h: Print string
 ; TODO: Not used by DOS 1.0?
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number (0x13)
 ;   ES:BP - string
@@ -169,14 +210,20 @@ write_string:
         ret
 
 
+; --------------------------------------------------
 ; Function 1Ah: Get or set display combination code
+; --------------------------------------------------
 get_or_set_display_combination_code:
         ret
 
+; --------------------------------------------------
 ; Function 1Bh: Get functionality information
+; --------------------------------------------------
 get_functionality_information:
         ret
 
+; --------------------------------------------------
 ; Function 1Ch: Save or restore video state
+; --------------------------------------------------
 save_or_restore_video_state:
         ret

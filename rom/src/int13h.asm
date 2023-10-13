@@ -15,11 +15,12 @@
 
         section .text
 
+; --------------------------------------------------
 ; BIOS 0x13 ISR
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number
-global  int13h_isr
+        global  int13h_isr
 int13h_isr:
         push    bx  ; Save BX to perform pointer arithmetic
 
@@ -49,19 +50,23 @@ int13h_function_table:
         dw      read_drive_parameters  ; ELKS
         ; TODO: Implement the rest?
 
+; --------------------------------------------------
 ; No-op (unimplemented) function
+; --------------------------------------------------
 int13h_nop:
         ret
 
+; --------------------------------------------------
 ; Function 00h: Reset disk system
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number (0x00)
 reset_disk_system:
         ret
 
+; --------------------------------------------------
 ; Function 01h: Get status of last drive operation
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number (0x01)
 ;   DL - drive number (0x00 = floppy, 0x80 = hard disk)
@@ -72,8 +77,9 @@ reset_disk_system:
 get_status_of_last_drive_operation:
         ret
 
+; --------------------------------------------------
 ; Function 02h: Read sectors from drive
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number (0x02)
 ;   AL - number of sectors to read
@@ -108,8 +114,9 @@ read_sectors_from_drive:
 
         ret
 
+; --------------------------------------------------
 ; Function 03h: Write sectors to drive
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number (0x03)
 ;   AL - number of sectors to write
@@ -144,8 +151,9 @@ write_sectors_to_drive:
 
         ret
 
+; --------------------------------------------------
 ; Function 08h: Read drive parameters
-;
+; --------------------------------------------------
 ; Args:
 ;   AH - function number (0x08)
 ;   DL - drive number (0x00 = floppy, 0x80 = hard disk)

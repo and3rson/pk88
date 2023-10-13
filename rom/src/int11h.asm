@@ -42,8 +42,10 @@ EQUIPMENT_LIST \
 
         section .text
 
+; --------------------------------------------------
 ; BIOS 0x11 ISR
-global  int11h_isr
+; --------------------------------------------------
+        global  int11h_isr
 int11h_isr:
         mov     ax, EQUIPMENT_LIST
 

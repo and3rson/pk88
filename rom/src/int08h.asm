@@ -13,8 +13,10 @@
 
         section .text
 
+; --------------------------------------------------
 ; BIOS 0x08 ISR
-global  int08h_isr
+; --------------------------------------------------
+        global  int08h_isr
 int08h_isr:
         ; Do nothing, simply trigger user ISR
         jmp     int1Ch_isr
