@@ -13,9 +13,9 @@ PIC  = /M         * /A1  * /A2  * /A3  * /A4  *  A5  * /A6  * /A7  * /A8  * /A9
 PIT  = /M                * /A2  * /A3  * /A4  * /A5  *  A6  * /A7  * /A8  * /A9
 ; 8255 PPI:    00011000xx (0x60-0x63)
 PPI  = /M                * /A2  * /A3  * /A4  *  A5  *  A6  * /A7  * /A8  * /A9
-; 16550 UART:  1111111xxx (0x3f8-0x3ff)
+; 16550 UART:  xx11111xxx (0xXf8-0xXff)
 ; https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf
-UART = /M                       *  A3  *  A4  *  A5  *  A6  *  A7  *  A8  *  A9
+UART = /M                       *  A3  *  A4  *  A5  *  A6  *  A7
 
 DESCRIPTION
 Address decoder for Bandera88

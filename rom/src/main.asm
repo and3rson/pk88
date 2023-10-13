@@ -17,6 +17,8 @@
 
         extern interrupt_init
         extern lcd_init
+        extern uart_init
+        extern uart_send
 
         ; org     ROM_SEG*16
 
@@ -55,12 +57,22 @@ init:
         out     dx, al
 
         call    interrupt_init
+        call    uart_init
         call    lcd_init
 
         ; Ready!
 
         sti
 
+        ; Send stuff to UART
+        mov     al, 0x20
+.send:
+        call    uart_send
+        inc     al
+        cmp     al, 0x7F
+        jne     .send
+
+        ; Print string
         mov     ax, ROM_SEG
         mov     es, ax
         mov     ah, 0x13

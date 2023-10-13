@@ -36,7 +36,7 @@ IO_CTRL equ     PPI + 3
 
 ; 8251 UART
 ; https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf
-UART    equ     0x3f8
+UART    equ     0xf8
 ; DLAB = 0
 UA_RBR  equ     UART + 0  ; Received Buffer Register (READ)
 UA_THR  equ     UART + 0  ; Transmitter Holding Register (WRITE)

@@ -22,6 +22,8 @@
 ; --------------------------------------------------
         global  lcd_init
 lcd_init:
+        push    ax
+
         xor     ax, ax
         call    cmd_set_text_home_addr
 
@@ -49,6 +51,9 @@ lcd_init:
         call    cmd_set_cursor_pos
         call    cmd_set_addr_pointer
 
+        pop     ax
+        ret
+
 ; --------------------------------------------------
 ; Clear screen
 ; --------------------------------------------------
@@ -69,6 +74,8 @@ lcd_clear:
 
         pop     cx
         pop     ax
+
+        ret
 
 ; --------------------------------------------------
 ; Print string to LCD
