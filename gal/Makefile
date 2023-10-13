@@ -14,7 +14,7 @@ clean:
 
 .PHONY: test
 test: $(SRC)
-	@for test in $(TESTS); do \
+	@set -e; for test in $(TESTS); do \
 		echo "*** $$test"; \
 		ginger $${test%.*}.pld $$test; \
 		echo; \

@@ -1,6 +1,6 @@
 ; =====================================================
 ;
-; LCD functions
+; LCD functions for HD44780 (20x04)
 ;
 ; This file is part of MetalBIOS for PK-88.
 ;

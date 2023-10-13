@@ -9,9 +9,8 @@
         cpu     8086
         bits    16
 
-        extern  lcd_write
-        extern  lcd_busy
-        extern  lcd_print
+        extern  lcd_printchar
+        extern  lcd_printstr
 
         section .text
 
@@ -140,11 +139,7 @@ read_graphics_pixel:
 ;   BH - page number (ignored)
 ;   BL - foreground color (ignored)
 write_character_in_tty_mode:
-        push    ax
-        mov     ah, 1
-        call    lcd_write
-        call    lcd_busy
-        pop     ax
+        call    lcd_printchar
         ret
 
 ; Function 0Fh: Get video mode
@@ -168,9 +163,9 @@ alternate_select_functions:
 ;
 ; Args:
 ;   AH - function number (0x13)
-;   DS:SI - string
+;   ES:BP - string
 write_string:
-        call    lcd_print
+        call    lcd_printstr
         ret
 
 

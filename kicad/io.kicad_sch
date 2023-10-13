@@ -1216,7 +1216,7 @@
           (number "7" (effects (font (size 1.27 1.27))))
         )
         (pin input line (at -12.7 12.7 0) (length 2.54)
-          (name "~{C}/D" (effects (font (size 1.27 1.27))))
+          (name "C/~{D}" (effects (font (size 1.27 1.27))))
           (number "8" (effects (font (size 1.27 1.27))))
         )
       )
