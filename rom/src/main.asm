@@ -10,11 +10,10 @@
         cpu     8086
         bits    16
 
-        extern foo
-
         %include "sys.inc"
         %include "ports.inc"
 
+        extern equipment_list_init
         extern interrupt_init
         extern lcd_init
         extern uart_init
@@ -56,6 +55,7 @@ init:
         ; +---------- 1: Mode set flag
         out     dx, al
 
+        call    equipment_list_init
         call    interrupt_init
         call    uart_init
         call    lcd_init

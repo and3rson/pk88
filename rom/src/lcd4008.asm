@@ -10,6 +10,7 @@
         bits    16
 
         %include "ports.inc"
+        %include "bda.inc"
 
         section .text
 
@@ -23,6 +24,7 @@
         global  lcd_init
 lcd_init:
         push    ax
+        push    es
 
         xor     ax, ax
         call    cmd_set_text_home_addr
@@ -51,6 +53,13 @@ lcd_init:
         call    cmd_set_cursor_pos
         call    cmd_set_addr_pointer
 
+        ; Set video mode to 7
+        mov     ax, BDA_SEG
+        mov     es, ax
+        mov     al, 0x07
+        mov     [es:BDA_VIDEO_MODE_ACTIVE], al
+
+        pop     es
         pop     ax
         ret
 
