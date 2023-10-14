@@ -70,3 +70,23 @@ tx_busy:
         jz      .wait
         pop     ax
         ret
+
+; --------------------------------------------------
+; Get line status
+; --------------------------------------------------
+; Return:
+;   AL - LSR value
+        global  uart_line_status
+uart_line_status:
+        in      al, UA_LSR
+        ret
+
+; --------------------------------------------------
+; Get MODEM status
+; --------------------------------------------------
+; Return:
+;   AL - MSR value
+        global  uart_modem_status
+uart_modem_status:
+        in      al, UA_MSR
+        ret
