@@ -31,7 +31,7 @@ $(SRCDIR)/%.o: $(SRCDIR)/%.asm $(DEPS)
 
 .PHONY: disasm
 disasm: $(TARGET)
-	unbuffer objdump -SDr $(ELF) -M i8086,intel | less -R
+	unbuffer objdump -Sdr $(ELF) -M i8086,intel | less -R
 
 .PHONY: clean
 clean:
