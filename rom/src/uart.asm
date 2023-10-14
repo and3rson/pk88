@@ -25,6 +25,7 @@ LCR_PAR_STICK   equ     0x20
 LCR_BREAK_CTRL  equ     0x40
 LCR_DLAB        equ     0x80
 
+LSR_DATA_READY  equ     0x01
 LSR_THRE        equ     0x20
 
 ; --------------------------------------------------
@@ -48,6 +49,14 @@ uart_init:
         mov     al, LCR_8BIT
         out     UA_LCR, al
 
+        ; Disable all interrupts (clear bits 0..3 of IER)
+        mov     al, 0x0
+        out     UA_IER, al
+
+        ; Enable FIFO
+        mov     al, 0x01
+        out     UA_FCR, al
+
         pop     ax
         ret
 
@@ -58,17 +67,31 @@ uart_init:
 ;   AL - byte
         global  uart_send
 uart_send:
-        call    tx_busy
-        out     UA_THR, al
-        ret
+        push ax
 
-tx_busy:
-        push    ax
+        xchg    al, ah
 .wait:
         in      al, UA_LSR
-        and     al, LSR_THRE
+        test    al, LSR_THRE
         jz      .wait
+        xchg    al, ah
+        out     UA_THR, al
+
         pop     ax
+        ret
+
+; --------------------------------------------------
+; Read byte
+; --------------------------------------------------
+; Return:
+;   AL - byte
+        global  uart_receive
+uart_receive:
+        in      al, UA_LSR
+        test    al, LSR_DATA_READY
+        jz      uart_receive
+
+        in      al, UA_RBR
         ret
 
 ; --------------------------------------------------

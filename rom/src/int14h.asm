@@ -14,6 +14,7 @@
 
         extern  uart_init
         extern  uart_send
+        extern  uart_receive
         extern  uart_line_status
         extern  uart_modem_status
 
@@ -66,20 +67,23 @@ init_serial_port:
 ; Args:
 ;   DX - port number (ignored)
 ;   AL - byte
-;   AH - error status (bit 7 set on error)
+;   AH - error status, bit 7 set on error (ignored)
 transmit_byte:
         call    uart_send
+        xor     ah, ah
         ret
 
 ; --------------------------------------------------
 ; Function 02h: Receive byte
 ; --------------------------------------------------
-; Return:
+; Args:
 ;   DX - port number (ignored)
+; Return:
 ;   AL - byte
-;   AH - error status (bit 7 set on error)
+;   AH - error status, bit 7 set on error (ignored)
 receive_byte:
-        ; TODO: Implement this
+        call    uart_receive
+        xor     ah, ah
         ret
 
 ; --------------------------------------------------
