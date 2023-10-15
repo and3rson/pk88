@@ -1,6 +1,6 @@
 DESTDIR = bin
-TARGET = $(DESTDIR)/main.bin
-LDCONFIG = main.ld
+TARGET = $(DESTDIR)/metalbios.bin
+LDCONFIG = metalbios.ld
 
 SRCDIR = src
 INCDIR = include
