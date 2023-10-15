@@ -6,10 +6,10 @@ Single-board computer based on KM1810VM88 CPU (Ukrainian clone of Intel 8088).
 
 PK stands for "Personalnii Kompyuter" ("Personal Computer") in Ukrainian.
 
-- <./kicad/> - KiCad schematics
-- <./gal/> - Sources for address decoder (ATF16V8)
-- <./circuits/> - Various circuit simulations (made with [Digital](https://github.com/hneemann/Digital))
-- <./metalbios/> - MetalBIOS (IBM PC XT compatible-ish BIOS that I made specifically for PK-88)
+- [./kicad/](KiCad schematics)
+- [./gal/](GAL sources) - Address & I/O port decoders using 2x ATF16V8
+- [./circuits/](Various circuit simulations) - made with [Digital](https://github.com/hneemann/Digital)
+- [./metalbios/](MetalBIOS) - IBM PC XT compatible-ish BIOS that I made specifically for PK-88
 
 ## Resources
 
