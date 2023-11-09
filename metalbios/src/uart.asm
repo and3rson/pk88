@@ -50,6 +50,11 @@ uart_init:
         out     UA_LCR, al
 
         ; Disable all interrupts (clear bits 0..3 of IER)
+        ; Bit 0 - received data available interrupt
+        ; Bit 1 - transmitter holding register empty interrupt
+        ; Bit 2 - receiver line status interrupt
+        ; Bit 3 - modem status interrupt
+        ; Bits 4..7 - always zero
         mov     al, 0x0
         out     UA_IER, al
 
