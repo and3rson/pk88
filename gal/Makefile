@@ -16,7 +16,7 @@ clean:
 test: $(SRC)
 	@set -e; for test in $(TESTS); do \
 		echo "*** $$test"; \
-		ginger $${test%.*}.pld $$test; \
+		python3 ~/src/ginger/ginger/__main__.py $${test%.*}.pld $$test; \
 		echo; \
 	done
 

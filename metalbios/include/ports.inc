@@ -17,8 +17,8 @@ LCD_CMD equ     LCD + 1
 
 ; 8259 PIC
 PIC     equ     0x20
-PIC_CMD equ     PIC + 0
-PIC_DAT equ     PIC + 1
+PIC_A0  equ     PIC + 0
+PIC_A1  equ     PIC + 1
 
 ; 8253 PIT
 PIT     equ     0x40

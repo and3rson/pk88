@@ -1,6 +1,6 @@
 ; =====================================================
 ;
-; Functions for 16550 UART
+; UART functions (via 16550)
 ; https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf
 ;
 ; This file is part of MetalBIOS for PK-88.
@@ -27,6 +27,10 @@ LCR_DLAB        equ     0x80
 
 LSR_DATA_READY  equ     0x01
 LSR_THRE        equ     0x20
+
+; ================================================
+; UART
+; ================================================
 
 ; --------------------------------------------------
 ; Initialize UART
@@ -111,6 +115,8 @@ uart_line_status:
 
 ; --------------------------------------------------
 ; Get MODEM status
+;
+; WARNING: /CTS is used for SPI (MISO)
 ; --------------------------------------------------
 ; Return:
 ;   AL - MSR value

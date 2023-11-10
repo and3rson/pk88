@@ -53,6 +53,8 @@ lcd_init:
         call    cmd_set_cursor_pos
         call    cmd_set_addr_pointer
 
+        call    lcd_clear
+
         ; Set video mode to 7
         mov     ax, BDA_SEG
         mov     es, ax
@@ -64,7 +66,7 @@ lcd_init:
         ret
 
 ; --------------------------------------------------
-; Clear screen
+; Clear screen & set cursor pos & address to first char
 ; --------------------------------------------------
         global  lcd_clear
 lcd_clear:
@@ -80,6 +82,10 @@ lcd_clear:
         loop    .again
 
         call    cmd_auto_reset
+
+        mov     ax, 0x0000  ; X=0, Y=0
+        call    cmd_set_cursor_pos
+        call    cmd_set_addr_pointer
 
         pop     cx
         pop     ax

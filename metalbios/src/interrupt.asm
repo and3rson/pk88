@@ -10,6 +10,7 @@
         bits    16
 
         %include "sys.inc"
+        %include "ports.inc"
 
         extern  int08h_isr
         extern  int10h_isr
@@ -52,6 +53,38 @@ interrupt_init:
         cmp     cx, isr_handlers_len
         jne     .next
 
+        ; Initialize 8259 PIC
+        ; https://www.geeksforgeeks.org/command-words-of-8259-pic/
+
+        ; ICW1
+        mov     al, 0b00010111
+        ; 0 0 0 1 0 1 1 1
+        ; ^ ^ ^ ^ ^ ^ ^ ^
+        ; | | | | | | | |
+        ; | | | | | | | +-- 1: ICW4 needed
+        ; +++++ | | | +--- 1: single mode
+        ;   |   | | +---- 1: CALL address interval (4)
+        ;   |   | +----- 0: Edge triggered mode
+        ;   |   +------ 1: D4 must be 1 for ICW1
+        ;   +-------- 000: MCS-80/85 mode only
+        out     PIC_A0, al
+
+        ; ICW2
+        mov     al, 0b00001000  ; IRQ0 = INT 0x08 (D7..D3 = T7..T3)
+        out     PIC_A1, al
+
+        ; ICW4
+        mov     al, 0b00000011
+        ; 0 0 0 0 0 X 1 1
+        ; ^ ^ ^ ^ ^ ^ ^ ^
+        ; | | | | | | | |
+        ; | | | | +++ | +- 1: 8086/8088 mode
+        ; +++++ |  |  +-- 1: auto end-ot-interrupt
+        ;   |   |  +---- 0X: non-buffered mode
+        ;   |   +------ 0: not special fully nested mode
+        ;   +-------- 000
+        out     PIC_A1, al
+
         pop     di
         pop     ds
         pop     cx
@@ -60,11 +93,11 @@ interrupt_init:
         ret
 
 isr_handlers:
-        dw      isr_stub        ; 0x00
-        dw      isr_stub
-        dw      isr_stub
-        dw      isr_stub
-        dw      isr_stub
+        dw      isr_stub        ; 0x00 - Divide error
+        dw      isr_stub        ; 0x01 - Single step
+        dw      isr_stub        ; 0x02 - NMI
+        dw      isr_stub        ; 0x03 - 1-byte int instruction
+        dw      isr_stub        ; 0x04 - Overflow
         dw      isr_stub        ; 0x05 - Shift-PrtScr
         dw      isr_stub
         dw      isr_stub

@@ -18,12 +18,15 @@
         extern lcd_init
         extern uart_init
         extern uart_send
+        extern sdc_init
 
         ; org     ROM_SEG*16
 
         section .rodata
 
-HELLO_S db      "Hello, KM1810VM88!", 0
+HELLO_S         db      "PK-88", 0
+SD_OK_S         db      "SD card OK", 10, 0
+SD_FAIL_S       db      "SD card FAILED: ", 0
 
         ; %include "lcd.asm"
         ; %include "interrupt.asm"
@@ -60,6 +63,34 @@ init:
         call    uart_init
         call    lcd_init
 
+        ; Print string
+        mov     ax, ROM_SEG
+        mov     es, ax
+        mov     ah, 0x13
+        mov     bp, HELLO_S
+        int     0x10
+
+        call    sdc_init
+
+        mov     bx, ROM_SEG
+        mov     es, bx
+        mov     ah, 0x13
+        cmp     al, 0
+        jne     .sd_fail
+.sd_ok:
+        mov     bp, SD_OK_S
+        int     0x10
+        jmp     .sd_end
+.sd_fail:
+        mov     bp, SD_FAIL_S
+        int     0x10
+        add     al, '0'
+        mov     ah, 0x0E
+        int     0x10
+        mov     al, 10
+        int     0x10
+.sd_end:
+
         ; Ready!
 
         sti
@@ -72,12 +103,15 @@ init:
         cmp     al, 0x7F
         jne     .send
 
-        ; Print string
-        mov     ax, ROM_SEG
-        mov     es, ax
-        mov     ah, 0x13
-        mov     bp, HELLO_S
-        int     0x10
+        ; Write to SPI
+        ; mov     al, 0x42
+        ; call    spi_xfer
+        ; mov     ah, 0x0E
+        ; int     0x10
+        ; mov     al, 0xAF
+        ; call    spi_xfer
+        ; mov     ah, 0x0E
+        ; int     0x10
 
 ;         xor     dx, dx
 ;         mov     ds, dx
