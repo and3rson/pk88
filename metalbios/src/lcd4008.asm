@@ -1,5 +1,5 @@
 ; =====================================================
-;
+; œ
 ; LCD functions for T6963C LCD (240x64, 40x08 characters)
 ;
 ; This file is part of MetalBIOS for PK-88.
@@ -16,10 +16,7 @@
         section .rodata
 
 CHAR_DATA:
-        ; Block
-        db 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
-
-        ; Trident
+        ; 0x80 - Trident
         db 0b00100
         db 0b10101
         db 0b10101
@@ -29,7 +26,41 @@ CHAR_DATA:
         db 0b11111
         db 0b00100
 
-        ; "–ü"
+        ; 0x81-0x8F
+times 15*8      db      0
+        ; 0x90-0x9F
+times 16*8      db      0
+        ; 0xA0-0xA4
+times 5*8       db      0
+        ; 0xA5 - •
+times 1*8       db      0
+        ; 0xA6-0xA9
+times 4*8       db      0
+        ; 0xAA - ™
+times 1*8       db      0
+        ; 0xAB-0xAE
+times 4*8       db      0
+        ; 0xAF - Ø
+times 1*8       db      0
+        ; 0xB0-0xB1
+times 2*8       db      0
+        ; 0xB2 - ≤
+times 1*8       db      0
+        ; 0xB3 - ≥
+times 1*8       db      0
+        ; 0xB4 - ¥
+times 1*8       db      0
+        ; 0xB5-0xB9
+times 5*8       db      0
+        ; 0xBA - ∫
+times 1*8       db      0
+        ; 0xBB-0xBE
+times 4*8       db      0
+        ; 0xBF - ø
+times 1*8       db      0
+        ; 0xC0-0xCE - ¿¡¬√ƒ≈∆«»… ÀÃÕŒ
+times 15*8      db      0
+        ; 0xCF - œ
         db 0b11111
         db 0b10001
         db 0b10001
@@ -38,6 +69,16 @@ CHAR_DATA:
         db 0b10001
         db 0b10001
         db 0b00000
+        ; 0xD0-0xD9 - –—“”‘’÷◊ÿŸ
+times 10*8      db      0
+        ; 0xDA-0xDB - russian garbage
+times 2*8       db      0
+        ; 0xDC - ‹
+times 1*8       db      0
+        ; 0xDD - russian garbage
+times 1*8       db      0
+        ; 0xDE-0xDF - ﬁﬂ
+times 2*8       db      0
 
 CHAR_DATA_LEN   equ     $ - CHAR_DATA
 
