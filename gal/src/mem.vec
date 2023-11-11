@@ -52,7 +52,7 @@
 
 @ Clock test
 < RST
-> Q0 Q1 TMCK
+> Q0 Q1 Q2 TMCK
 
 1
 # Q1 is 66% duty-cycle clock, TMCK is Q1 / 2
@@ -63,7 +63,9 @@
 0
 0
 0
-1  # Trigger reset
+0
+0
+0
 0
 0
 0

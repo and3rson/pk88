@@ -18,6 +18,7 @@
         extern lcd_init
         extern uart_init
         extern uart_send
+        extern pit_init
         extern sdc_init
         extern sdc_read_single_block
 
@@ -63,6 +64,7 @@ init:
         call    interrupt_init
         call    uart_init
         call    lcd_init
+        call    pit_init
 
         ; Print string
         mov     ax, ROM_SEG
@@ -132,7 +134,7 @@ init:
 ;         out     dx, al
 ;         jmp     .again
 
-        hlt
+        jmp     $
 
 ;         ; Delay 65536 iterations (~557 (524?) ms)
 ;         ; (1 iteration takes ~8 us)
