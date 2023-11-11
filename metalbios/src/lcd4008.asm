@@ -9,8 +9,37 @@
         cpu     8086
         bits    16
 
+        %include "sys.inc"
         %include "ports.inc"
         %include "bda.inc"
+
+        section .rodata
+
+CHAR_DATA:
+        ; Block
+        db 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+
+        ; Trident
+        db 0b00100
+        db 0b10101
+        db 0b10101
+        db 0b11011
+        db 0b11111
+        db 0b10101
+        db 0b11111
+        db 0b00100
+
+        ; "П"
+        db 0b11111
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b00000
+
+CHAR_DATA_LEN   equ     $ - CHAR_DATA
 
         section .text
 
@@ -24,6 +53,7 @@
         global  lcd_init
 lcd_init:
         push    ax
+        push    bx
         push    es
 
         xor     ax, ax
@@ -49,6 +79,23 @@ lcd_init:
         mov     al, 0x07  ; 8-line cursor
         call    cmd_set_cursor_pattern
 
+        ; Write custom chars
+        mov     ax, 0x1400  ; CGRAM start address
+        call    cmd_set_addr_pointer
+        call    cmd_autowrite_on
+        mov     ax, ROM_SEG
+        mov     es, ax
+        mov     bx, CHAR_DATA
+        mov     cx, CHAR_DATA_LEN
+.writebyte:
+        mov     al, [es:bx]
+        call    autowrite
+        inc     bx
+        loop    .writebyte
+        call    cmd_auto_reset
+
+        ; Reset cursor pos & data addr pointer
+
         mov     ax, 0x0000  ; X=0, Y=0
         call    cmd_set_cursor_pos
         call    cmd_set_addr_pointer
@@ -66,6 +113,7 @@ lcd_init:
         mov     [es:BDA_CURSOR_POS_P1], ax
 
         pop     es
+        pop     bx
         pop     ax
         ret
 
@@ -144,11 +192,12 @@ lcd_printchar:
         je      .backspace
         cmp     al, 0x0D
         je      .cr
-        ; TODO: Custom chars
+        cmp     al, 0x80
+        jae     .char
+        sub     al, 0x20
 
 .char:
         ; TODO: CR/LF if X = 39
-        sub     al, 0x20
         call    cmd_write_data_increment_adp
         inc     cl
         mov     [es:BDA_CURSOR_POS_P1], cx

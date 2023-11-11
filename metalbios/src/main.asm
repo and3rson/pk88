@@ -25,7 +25,7 @@
 
         section .rodata
 
-HELLO_S         db      "             *** PK-88 ***", 13, 10, 0
+HELLO_S         db      "             *** ",0x82,"K-88 ***", 13, 10, 0
 SD_OK_S         db      "SD card OK", 13, 10, 0
 SD_FAIL_S       db      "SD card FAILED: ", 0
 
