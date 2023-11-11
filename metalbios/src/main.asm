@@ -19,13 +19,14 @@
         extern uart_init
         extern uart_send
         extern sdc_init
+        extern sdc_read_single_block
 
         ; org     ROM_SEG*16
 
         section .rodata
 
-HELLO_S         db      "PK-88", 0
-SD_OK_S         db      "SD card OK", 10, 0
+HELLO_S         db      "             *** PK-88 ***", 13, 10, 0
+SD_OK_S         db      "SD card OK", 13, 10, 0
 SD_FAIL_S       db      "SD card FAILED: ", 0
 
         ; %include "lcd.asm"
@@ -87,6 +88,8 @@ init:
         add     al, '0'
         mov     ah, 0x0E
         int     0x10
+        mov     al, 13
+        int     0x10
         mov     al, 10
         int     0x10
 .sd_end:
@@ -94,6 +97,12 @@ init:
         ; Ready!
 
         sti
+
+        mov     ax, 0x2000
+        mov     es, ax
+        xor     bx, bx
+        xor     ax, ax
+        call    sdc_read_single_block
 
         ; Send stuff to UART
         mov     al, 0x20

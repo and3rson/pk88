@@ -61,6 +61,10 @@ lcd_init:
         mov     al, 0x07
         mov     [es:BDA_VIDEO_MODE_ACTIVE], al
 
+        ; Set cursor pos in BDA
+        xor     ax, ax
+        mov     [es:BDA_CURSOR_POS_P1], ax
+
         pop     es
         pop     ax
         ret
@@ -124,10 +128,79 @@ lcd_printstr:
 ;   AL - character
         global  lcd_printchar
 lcd_printchar:
+        push    ax
+        push    bx
+        push    cx
+        push    es
+
+        mov     cx, BDA_SEG
+        mov     es, cx
+
+        mov     cx, [es:BDA_CURSOR_POS_P1]  ; Y:X
+
+        cmp     al, 0x0A
+        je      .lf
+        cmp     al, 0x08
+        je      .backspace
+        cmp     al, 0x0D
+        je      .cr
+        ; TODO: Custom chars
+
+.char:
+        ; TODO: CR/LF if X = 39
         sub     al, 0x20
-        ; TODO: handle CR/LF, backspace, etc
         call    cmd_write_data_increment_adp
-        add     al, 0x20
+        inc     cl
+        mov     [es:BDA_CURSOR_POS_P1], cx
+        jmp     .end
+
+.cr:  ; X = 0
+        xor     cl, cl
+        call    lcd_gotoxy
+        jmp     .end
+.lf:  ; Y = Y + 1
+        ; TODO: Scroll display if Y = 7
+        ; Calculate new cursor pos
+        inc     ch
+        call    lcd_gotoxy
+        jmp     .end
+.backspace:
+        jmp     .end
+
+.end:
+        pop     es
+        pop     cx
+        pop     bx
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Move cursor
+; --------------------------------------------------
+; Args:
+;   CL - X
+;   CH - Y
+        global  lcd_gotoxy
+lcd_gotoxy:
+        push    ax
+        push    bx
+
+        mov     [es:BDA_CURSOR_POS_P1], cx
+
+        ; Set cursor pos
+        mov     ax, cx
+        call    cmd_set_cursor_pos
+        ; Set address pointer
+        xor     ax, ax
+        mov     al, ch  ; AL = Y
+        mov     bh, 40
+        mul     bh      ; AX = Y * 8
+        xor     ch, ch
+        add     ax, cx  ; AX = Y * 8 + X
+        call    cmd_set_addr_pointer
+
+        pop     bx
+        pop     ax
         ret
 
 ; ==================================================

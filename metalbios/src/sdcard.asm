@@ -59,7 +59,7 @@ sdc_init:
         ; CMD0 - init
         call    cmd0_go_idle_state
         call    wait_byte
-        cmp     ah, 1
+        cmp     al, 1
         jne     .go_idle_state_fail
 
         ; CMD8 - send voltage check
@@ -67,7 +67,7 @@ sdc_init:
         call    wait_byte       ; Read header
         mov     cx, 5           ; Skip 5 bytes
         call    skip
-        cmp     ah, 1
+        cmp     al, 1
         jne     .if_cond_fail
 
         ; CMD58 - read OCR
@@ -75,23 +75,21 @@ sdc_init:
         call    wait_byte       ; Read header
         mov     cx, 5           ; Skip 5 bytes
         call    skip
-        cmp     ah, 1
+        cmp     al, 1
         jne     .read_ocr_fail
 
         ; CMD55 - send app cmd
         call    cmd55_app_cmd
         call    wait_byte       ; Read header
-        mov     cx, 1           ; Skip tail
-        call    skip
-        cmp     ah, 1
+        call    skip1           ; Skip tail
+        cmp     al, 1
         jne     .app_fail
 
         ; CMD41 - send app op cond
         call    cmd41_send_op_cond
         call    wait_byte       ; Read header
-        mov     cx, 1           ; Skip tail
-        call    skip
-        cmp     ah, 1
+        call    skip1           ; Skip tail
+        cmp     al, 1
         jne     .op_cond_fail
 
         ; CMD55 - send app cmd
@@ -100,16 +98,14 @@ sdc_init:
         push    cx
         call    cmd55_app_cmd
         call    wait_byte       ; Read header
-        mov     cx, 1           ; Skip tail
-        call    skip
+        call    skip1           ; Skip tail
 
         ; CMD41 - send app op cond
         call    cmd41_send_op_cond
         call    wait_byte       ; Read header
-        mov     cx, 1           ; Skip tail
-        call    skip
+        call    skip1           ; Skip tail
         pop     cx
-        cmp     ah, 0
+        cmp     al, 0
         je      .app_init_ok
         loop    .app_init
 
@@ -127,9 +123,8 @@ sdc_init:
         mov     ax, 512
         call    cmd16_set_blocklen
         call    wait_byte       ; Read header
-        mov     cx, 1           ; Skip tail
-        call    skip
-        cmp     ah, 0
+        call    skip1           ; Skip tail
+        cmp     al, 0
         jne     .set_blocklen_fail
 
         xor     ax, ax
@@ -162,18 +157,69 @@ sdc_init:
         pop     cx
         ret
 
+; --------------------------------------------------
+; Read single block
+; --------------------------------------------------
+; Args:
+;   AX - block number
+;   ES:BX - buffer address
+; Return:
+;   AX - error code, 0 if success
+        global  sdc_read_single_block
+sdc_read_single_block:
+        push    bx
+        push    cx
+
+        call    enable
+
+        call    cmd17_read_block
+        call    wait_byte       ; Read header
+        mov     cx, 1           ; Skip tail
+        call    skip
+        cmp     al, 0
+        jne     .read_block_fail
+
+        call    wait_byte
+        cmp     al, 0xfe
+        jne     .token_fail
+
+        ; Read block bytes
+        mov     cx, 512
+.next:
+        call    read
+        mov     [es:bx], al
+        inc     bx
+        loop    .next
+
+        xor     ax, ax
+        jmp     .end
+
+.read_block_fail:
+        mov     ax, 1
+        jmp     .end
+.token_fail:
+        mov     ax, 2
+        jmp     .end
+.end:
+        call    disable
+
+        pop     cx
+        pop     bx
+        ret
+
+
 cmd0_go_idle_state:
         push    ax
 
         mov     al, 0 | SDC_HEADER
-        call    xfer
+        call    write
         mov     al, 0  ; arguments
-        call    xfer
-        call    xfer
-        call    xfer
-        call    xfer
+        call    write
+        call    write
+        call    write
+        call    write
         mov     al, 0x95  ; CRC and stop bit
-        call    xfer
+        call    write
 
         pop     ax
         ret
@@ -182,16 +228,16 @@ cmd8_send_if_cond:
         push    ax
 
         mov     al, 8 | SDC_HEADER
-        call    xfer
+        call    write
         mov     al, 0  ; arguments
-        call    xfer
-        call    xfer
+        call    write
+        call    write
         mov     al, 1
-        call    xfer
+        call    write
         mov     al, 0xaa
-        call    xfer
+        call    write
         mov     al, 0x87  ; CRC and stop bit
-        call    xfer
+        call    write
 
         pop     ax
         ret
@@ -200,14 +246,14 @@ cmd58_read_ocr:
         push    ax
 
         mov     al, 58 | SDC_HEADER
-        call    xfer
+        call    write
         mov     al, 0  ; arguments
-        call    xfer
-        call    xfer
-        call    xfer
-        call    xfer
+        call    write
+        call    write
+        call    write
+        call    write
         mov     al, 0b01110101  ; CRC and stop bit
-        call    xfer
+        call    write
 
         pop     ax
         ret
@@ -216,14 +262,14 @@ cmd55_app_cmd:
         push    ax
 
         mov     al, 55 | SDC_HEADER
-        call    xfer
+        call    write
         mov     al, 0  ; arguments
-        call    xfer
-        call    xfer
-        call    xfer
-        call    xfer
+        call    write
+        call    write
+        call    write
+        call    write
         mov     al, 0x55  ; CRC and stop bit
-        call    xfer
+        call    write
 
         pop     ax
         ret
@@ -232,15 +278,15 @@ cmd41_send_op_cond:
         push    ax
 
         mov     al, 41 | SDC_HEADER
-        call    xfer
+        call    write
         mov     al, 0b01000000  ; arguments
-        call    xfer
+        call    write
         mov     al, 0
-        call    xfer
-        call    xfer
-        call    xfer
+        call    write
+        call    write
+        call    write
         mov     al, 0x77  ; CRC and stop bit
-        call    xfer
+        call    write
 
         pop     ax
         ret
@@ -251,16 +297,37 @@ cmd16_set_blocklen:
 
         mov     bx, ax
         mov     al, 16 | SDC_HEADER
-        call    xfer
+        call    write
         mov     al, 0  ; arguments
-        call    xfer
-        call    xfer
+        call    write
+        call    write
         mov     al, bh
-        call    xfer
+        call    write
         mov     al, bl
-        call    xfer
+        call    write
         mov     al, 0x81  ; CRC and stop bit
-        call    xfer
+        call    write
+
+        pop     bx
+        pop     ax
+        ret
+
+cmd17_read_block:
+        push    ax
+        push    bx
+
+        mov     bx, ax
+        mov     al, 17 | SDC_HEADER
+        call    write
+        mov     al, 0           ; arguments
+        call    write           ; byte 3
+        call    write           ; byte 2
+        mov     al, bh
+        call    write           ; byte 1
+        mov     al, bl          ; byte 0
+        call    write
+        mov     al, 0x3B  ; CRC and stop bit
+        call    write
 
         pop     bx
         pop     ax
@@ -288,8 +355,8 @@ wait_byte:
 
         mov     cx, 0x100
 .again:
-        call    xfer
-        cmp     ah, 0xff
+        call    read
+        cmp     al, 0xff
         jne     .end
         loop    .again
 .end:
@@ -322,23 +389,74 @@ disable:
         pop     ax
         ret
 
+; ; --------------------------------------------------
+; ; Write/read byte to/from SPI
+; ; --------------------------------------------------
+; ; Args:
+; ;   AL - byte written to SPI
+; ; Return:
+; ;   AH - byte read from SPI
+;         global  sdc_xfer
+; xfer:
+;         push    bx
+;         push    cx
+;
+;         mov     cx, 8
+;         mov     bl, al
+;         mov     bh, al
+;         mov     al, 0b00001111  ; 7..3 = 0, 2 = MOSI, 1 = /CS, 0 = SCK
+;         mov     ah, 0
+; .next:
+;         rol     bl, 1
+;         jc      .set1
+; .set0:
+;         or      al, 0b00000100  ; MOSI = 0
+;         jmp     .setok
+; .set1:
+;         and     al, 0b11111011  ; MOSI = 1
+; .setok:
+;         out     UA_MCR, al      ; Write MOSI
+;         and     al, 0b11111110  ; SCK = 1
+;         out     UA_MCR, al      ; Write SCK
+;         ; Read start
+;         ; TODO: add delay?
+;         push    ax
+;         in      al, UA_MSR      ; Read MISO
+;         and     al, 0b00010000  ; MISO
+;         jz      .got1           ; MISO = 1 (/CTS = 0)
+; .got0:
+;         clc
+;         jmp     .gotok
+; .got1:
+;         stc
+; .gotok:
+;         pop     ax
+;         rcl     ah, 1
+;         ; Read end
+;         or      al, 0b00000001  ; SCK = 0
+;         out     UA_MCR, al      ; Write SCK
+;
+;         loop    .next
+;
+;         mov     al, bh          ; Restore written byte
+;
+;         pop     cx
+;         pop     bx
+;         ret
+
 ; --------------------------------------------------
-; Write/read byte to/from SPI
+; Write byte to SPI
 ; --------------------------------------------------
 ; Args:
 ;   AL - byte written to SPI
-; Return:
-;   AH - byte read from SPI
-        global  sdc_xfer
-xfer:
+write:
+        push    ax
         push    bx
         push    cx
 
         mov     cx, 8
         mov     bl, al
-        mov     bh, al
         mov     al, 0b00001111  ; 7..3 = 0, 2 = MOSI, 1 = /CS, 0 = SCK
-        mov     ah, 0
 .next:
         rol     bl, 1
         jc      .set1
@@ -351,9 +469,34 @@ xfer:
         out     UA_MCR, al      ; Write MOSI
         and     al, 0b11111110  ; SCK = 1
         out     UA_MCR, al      ; Write SCK
-        ; Read start
-        ; TODO: add delay?
+        or      al, 0b00000001  ; SCK = 0
+        out     UA_MCR, al      ; Write SCK
+
+        loop    .next
+
+        pop     cx
+        pop     bx
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Read byte from SPI
+; --------------------------------------------------
+; Return:
+;   AL - byte read from SPI
+read:
+        push    bx
+        push    cx
         push    ax
+
+        mov     cx, 8
+        mov     al, 0b00001011  ; 7..3 = 0, 2 = MOSI, 1 = /CS, 0 = SCK
+        xor     bl, bl
+.next:
+        and     al, 0b11111110  ; SCK = 1
+        out     UA_MCR, al      ; Write SCK
+        ; TODO: add delay?
+        xchg    al, ah
         in      al, UA_MSR      ; Read MISO
         and     al, 0b00010000  ; MISO
         jz      .got1           ; MISO = 1 (/CTS = 0)
@@ -363,8 +506,8 @@ xfer:
 .got1:
         stc
 .gotok:
-        pop     ax
-        rcl     ah, 1
+        rcl     bl, 1
+        xchg    al, ah
         ; Read end
         or      al, 0b00000001  ; SCK = 0
         out     UA_MCR, al      ; Write SCK
@@ -373,9 +516,12 @@ xfer:
 
         mov     al, bh          ; Restore written byte
 
+        pop     ax
+        mov     al, bl
         pop     cx
         pop     bx
         ret
+
 
 ; --------------------------------------------------
 ; Read & discard N bytes
@@ -386,8 +532,17 @@ skip:
         push    ax
         push    cx
 .skip:
-        call    xfer
+        call    read
         loop    .skip
         pop     cx
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Read & discard single byte
+; ---------------------------------------------------
+skip1:
+        push    ax
+        call    read
         pop     ax
         ret
