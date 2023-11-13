@@ -13,9 +13,13 @@
         %include "sys.inc"
         %include "ports.inc"
 
+        extern lcd_init
+        extern lcd_printstr
+        extern lcd_printword
+        extern lcd_printchar
+        extern memtest
         extern equipment_list_init
         extern interrupt_init
-        extern lcd_init
         extern uart_init
         extern uart_send
         extern pit_init
@@ -27,6 +31,9 @@
         section .rodata
 
 HELLO_S         db      "               ",0x80," ÏK-88 ", 0x80, 13, 10, 0
+MEMTEST_S       db      "Testing RAM", 0
+MEMTEST_OK_S    db      " OK", 13, 10, 0
+MEMTEST_FAIL_S  db      " FAILED @ ", 0
 SD_OK_S         db      "SD card OK", 13, 10, 0
 SD_FAIL_S       db      "SD card FAILED: ", 0
 
@@ -60,11 +67,43 @@ init:
         ; +---------- 1: Mode set flag
         out     dx, al
 
+        call    lcd_init
+        call    uart_init
         call    equipment_list_init
         call    interrupt_init
-        call    uart_init
-        call    lcd_init
         call    pit_init
+
+        mov     bx, ROM_SEG
+        mov     es, bx
+        mov     bp, MEMTEST_S
+        call    lcd_printstr
+        call    memtest
+        cmp     ax, 0
+        jne     .memtest_fail
+.memtest_ok:
+        mov     bx, ROM_SEG
+        mov     es, bx
+        mov     bp, MEMTEST_OK_S
+        call    lcd_printstr
+        jmp     .memtest_end
+.memtest_fail:
+        push    di
+        push    bx
+        mov     bx, ROM_SEG
+        mov     es, bx
+        mov     bp, MEMTEST_FAIL_S
+        call    lcd_printstr
+        pop     ax
+        call    lcd_printword
+        mov     al, ':'
+        call    lcd_printchar
+        pop     ax
+        call    lcd_printword
+        mov     al, 13
+        call    lcd_printchar
+        mov     al, 10
+        call    lcd_printchar
+.memtest_end:
 
         ; Print string
         mov     ax, ROM_SEG

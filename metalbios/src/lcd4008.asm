@@ -265,6 +265,63 @@ lcd_printchar:
         ret
 
 ; --------------------------------------------------
+; Print word as hex
+; --------------------------------------------------
+; Args:
+;   AX - byte
+        global  lcd_printword
+lcd_printword:
+        xchg    al, ah
+        call    lcd_printbyte
+        xchg    al, ah
+        call    lcd_printbyte
+
+        ret
+
+; --------------------------------------------------
+; Print byte as hex
+; --------------------------------------------------
+; Args:
+;   AL - byte
+        global  lcd_printbyte
+lcd_printbyte:
+        push    bx
+        mov     bx, ax
+
+        shr     al, 1
+        shr     al, 1
+        shr     al, 1
+        shr     al, 1
+        call    lcd_printnibble
+        mov     al, bl
+        call    lcd_printnibble
+
+        mov     ax, bx
+        pop     bx
+        ret
+
+; --------------------------------------------------
+; Print nibble as hex
+; --------------------------------------------------
+; Args:
+;   AL - nibble (lower 4 bits are used)
+; Clobbers:
+;   AL
+        global  lcd_printnibble
+lcd_printnibble:
+        and     al, 0x0F
+        cmp     al, 0x0A
+        jb      .digit
+        add     al, 'A' - 0x0A  ; 55
+        jmp     .done
+.digit:
+        add     al, '0'
+.done:
+        call    lcd_printchar
+
+        ret
+
+; --------------------------------------------------
 ; Move cursor
 ; --------------------------------------------------
 ; Args:
