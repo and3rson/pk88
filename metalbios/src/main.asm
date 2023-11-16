@@ -25,6 +25,7 @@
         extern pit_init
         extern sdc_init
         extern sdc_read_single_block
+        extern sdc_write_single_block
 
         ; org     ROM_SEG*16
 
@@ -141,8 +142,28 @@ init:
 
         mov     ax, 0x2000
         mov     es, ax
+
+        ; Read first sector
         xor     bx, bx
         xor     ax, ax
+        call    sdc_read_single_block
+
+        ; Init test data
+        xor     bx, bx
+        mov     cx, 0x200
+.write:
+        mov     [es:bx], cl
+        inc     bx
+        loop    .write
+
+        ; Write sector 0xFFF0
+        xor     bx, bx
+        mov     ax, 0xFFF0
+        call    sdc_write_single_block
+
+        ; Read sector 0xFFF0
+        xor     bx, bx
+        mov     ax, 0xFFF0
         call    sdc_read_single_block
 
         ; Send stuff to UART

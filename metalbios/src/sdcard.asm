@@ -191,6 +191,10 @@ sdc_read_single_block:
         inc     bx
         loop    .next
 
+        ; Read CRC
+        call    read
+        call    read
+
         xor     ax, ax
         jmp     .end
 
@@ -198,6 +202,72 @@ sdc_read_single_block:
         mov     ax, 1
         jmp     .end
 .token_fail:
+        mov     ax, 2
+        jmp     .end
+.end:
+        call    disable
+
+        pop     cx
+        pop     bx
+        ret
+
+; --------------------------------------------------
+; Write single block
+; --------------------------------------------------
+; Args:
+;   AX - block number
+;   ES:BX - buffer address
+; Return:
+;   AX - error code, 0 if success
+        global  sdc_write_single_block
+sdc_write_single_block:
+        push    bx
+        push    cx
+
+        call    enable
+
+        call    cmd24_write_block
+        call    wait_byte       ; Read header
+        cmp     al, 0
+        jne     .write_block_fail
+
+        ; Idle for 1 byte
+        mov     al, 0xff
+        call    write
+
+        ; Write token
+        mov     al, 0xfe
+        call    write
+
+        ; Write block bytes
+        mov     cx, 512
+.next:
+        mov     al, [es:bx]
+        call    write
+        inc     bx
+        loop    .next
+
+        ; Write CRC
+        mov     al, 0xff
+        call    write
+        call    write
+
+        ; Read data response
+        call    wait_byte
+        and     al, 0b00011111
+        cmp     al, 0b00000101
+        jne     .data_not_accepted
+
+        ; Wait for card to finish writing
+        call    busy
+
+        xor     ax, ax
+        jmp     .end
+
+.write_block_fail:
+        mov     ax, 1
+        jmp     .end
+.data_not_accepted:
         mov     ax, 2
         jmp     .end
 .end:
@@ -318,6 +388,27 @@ cmd17_read_block:
 
         mov     bx, ax
         mov     al, 17 | SDC_HEADER
+        call    write
+        mov     al, 0           ; arguments
+        call    write           ; byte 3
+        call    write           ; byte 2
+        mov     al, bh
+        call    write           ; byte 1
+        mov     al, bl          ; byte 0
+        call    write
+        mov     al, 0x3B  ; CRC and stop bit
+        call    write
+
+        pop     bx
+        pop     ax
+        ret
+
+cmd24_write_block:
+        push    ax
+        push    bx
+
+        mov     bx, ax
+        mov     al, 24 | SDC_HEADER
         call    write
         mov     al, 0           ; arguments
         call    write           ; byte 3
@@ -540,9 +631,21 @@ skip:
 
 ; --------------------------------------------------
 ; Read & discard single byte
-; ---------------------------------------------------
+; -------------------------------------------------
 skip1:
         push    ax
         call    read
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Block while card is busy (wait until 0xFF is received)
+; --------------------------------------------------
+busy:
+        push    ax
+.wait:
+        call    read
+        cmp     al, 0xff
+        jne     .wait
         pop     ax
         ret
