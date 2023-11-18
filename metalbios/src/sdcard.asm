@@ -440,7 +440,9 @@ cmd24_write_block:
 ; Wait for byte from SD card
 ; --------------------------------------------------
 ; Return:
-;   AH - received byte or 0xff if timeout (MISO stayed high)
+;   AL - received byte or 0xff if timeout (MISO stayed high)
+; Clobbers:
+;   AH
 wait_byte:
         push    cx
 
@@ -575,10 +577,11 @@ write:
 ; --------------------------------------------------
 ; Return:
 ;   AL - byte read from SPI
+; Clobbers:
+;   AH
 read:
         push    bx
         push    cx
-        push    ax
 
         mov     cx, 8
         mov     al, 0b00001011  ; 7..3 = 0, 2 = MOSI, 1 = /CS, 0 = SCK
@@ -605,9 +608,6 @@ read:
 
         loop    .next
 
-        mov     al, bh          ; Restore written byte
-
-        pop     ax
         mov     al, bl
         pop     cx
         pop     bx
