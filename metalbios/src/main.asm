@@ -32,11 +32,11 @@
         section .rodata
 
 HELLO_S         db      "               ",0x80," œK-88 ", 0x80, 13, 10, 0
-MEMTEST_S       db      "Testing RAM", 0
-MEMTEST_OK_S    db      " OK", 13, 10, 0
-MEMTEST_FAIL_S  db      " FAILED @ ", 0
-SD_OK_S         db      "SD card OK", 13, 10, 0
-SD_FAIL_S       db      "SD card FAILED: ", 0
+MEMTEST_S       db      "œÂÂ‚≥Í‡ Ô‡Ï'ˇÚ≥", 0
+MEMTEST_OK_S    db      " ‘¿…ÕŒ", 13, 10, 0
+MEMTEST_FAIL_S  db      " Õ≈ Œ  @ ", 0
+SD_OK_S         db      "SD-Í‡Ú‡ ‘¿…Õ¿", 13, 10, 0
+SD_FAIL_S       db      "SD-Í‡Ú‡ Õ≈ Œ : ", 0
 
         ; %include "lcd.asm"
         ; %include "interrupt.asm"
@@ -140,39 +140,52 @@ init:
 
         sti
 
-        mov     ax, 0x2000
-        mov     es, ax
+        ; xor     ax, ax
+        ; mov     es, ax
+        ; mov     ah, 0x02
+        ; mov     al, 8  ; Read 8 sectors
+        ; mov     ch, 0  ; Cylinder 0
+        ; mov     cl, 1  ; Sector 1
+        ; mov     dh, 0  ; Head 0
+        ; mov     dl, 0  ; Drive 0
+        ; mov     bx, 0x7E00
+        ; int     0x13
 
-        ; Read first sector
-        xor     bx, bx
-        xor     ax, ax
-        call    sdc_read_single_block
+        ; jmp     $
 
-        ; Init test data
-        xor     bx, bx
-        mov     cx, 0x200
-.write:
-        mov     [es:bx], cl
-        inc     bx
-        loop    .write
-
-        ; Write sector 0xFFF0
-        xor     bx, bx
-        mov     ax, 0xFFF0
-        call    sdc_write_single_block
-
-        ; Read sector 0xFFF0
-        xor     bx, bx
-        mov     ax, 0xFFF0
-        call    sdc_read_single_block
-
-        ; Send stuff to UART
-        mov     al, 0x20
-.send:
-        call    uart_send
-        inc     al
-        cmp     al, 0x7F
-        jne     .send
+;         mov     ax, 0x2000
+;         mov     es, ax
+;
+;         ; Read first sector
+;         xor     bx, bx
+;         xor     ax, ax
+;         call    sdc_read_single_block
+;
+;         ; Init test data
+;         xor     bx, bx
+;         mov     cx, 0x200
+; .write:
+;         mov     [es:bx], cl
+;         inc     bx
+;         loop    .write
+;
+;         ; Write sector 0xFFF0
+;         xor     bx, bx
+;         mov     ax, 0xFFF0
+;         call    sdc_write_single_block
+;
+;         ; Read sector 0xFFF0
+;         xor     bx, bx
+;         mov     ax, 0xFFF0
+;         call    sdc_read_single_block
+;
+;         ; Send stuff to UART
+;         mov     al, 0x20
+; .send:
+;         call    uart_send
+;         inc     al
+;         cmp     al, 0x7F
+;         jne     .send
 
         ; Write to SPI
         ; mov     al, 0x42
@@ -194,7 +207,16 @@ init:
 ;         out     dx, al
 ;         jmp     .again
 
-        jmp     $
+        ; jmp     $
+
+        ; https://thestarman.pcministry.com/asm/mbr/95BMEMBR.htm
+        ; Load bootsector
+        xor     ax, ax
+        mov     es, ax
+        mov     bx, 0x7C00
+        call    sdc_read_single_block
+        ; Execute bootsector
+        jmp     0x0000:0x7C00
 
 ;         ; Delay 65536 iterations (~557 (524?) ms)
 ;         ; (1 iteration takes ~8 us)

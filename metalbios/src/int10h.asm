@@ -195,7 +195,19 @@ character_generator:
 ; --------------------------------------------------
 ; Function 12h: Alternate select functions
 ; --------------------------------------------------
+; Args:
+;   BL=10 - Get video configuration information
+; Return:
+;   BH - 0 if color, 1 if monochrome
+;   BL - 0 = 64k EGA, 1 = 128k EGA, 2 = 192k EGA, 3 = 256k EGA
+;   CH - feature bits
+;   CL - switch settings
 alternate_select_functions:
+        ; mov     bh, 1   ; Monochrome
+        ; mov     bl, 0   ; 64k EGA
+        ; mov     ch, 0   ; No features
+        ; mov     cl, 0   ; No switches
+        stc
         ret
 
 ; --------------------------------------------------

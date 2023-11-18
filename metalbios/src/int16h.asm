@@ -9,9 +9,16 @@
         cpu     8086
         bits    16
 
+        %include "sys.inc"
+
         extern  lcd_write
         extern  lcd_busy
         extern  lcd_print
+        extern  lcd_printbyte
+
+        section .rodata
+
+STUB_S  db      "!0x16:", 0
 
         section .text
 
@@ -51,6 +58,23 @@ int16h_function_table:
 ; No-op (unimplemented) function
 ; --------------------------------------------------
 int16h_nop:
+        push    bp
+        push    es
+        push    ax
+
+        mov     ax, ROM_SEG
+        mov     es, ax
+        mov     ah, 0x13
+        mov     bp, STUB_S
+        int     0x10
+
+        pop     ax
+        xchg    ah, al
+        call    lcd_printbyte
+        xchg    ah, al
+        pop     es
+        pop     bp
+
         ret
 
 ; --------------------------------------------------

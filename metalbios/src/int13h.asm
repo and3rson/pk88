@@ -9,9 +9,17 @@
         cpu     8086
         bits    16
 
+        %include "sys.inc"
         %include "disk.inc"
 
         extern  disk_chs_to_lba
+        extern  sdc_read_single_block
+        extern  sdc_write_single_block
+        extern  lcd_printbyte
+
+        section .rodata
+
+STUB_S  db      "!0x13:", 0
 
         section .text
 
@@ -48,12 +56,87 @@ int13h_function_table:
         dw      int13h_nop
         dw      int13h_nop
         dw      read_drive_parameters  ; ELKS
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop  ; 0x10
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop  ; 0x20
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop  ; 0x30
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop
+        dw      int13h_nop  ; 0x40
+        dw      test_extensions  ; 0x41 - test whether extensions are available
+
         ; TODO: Implement the rest?
 
 ; --------------------------------------------------
 ; No-op (unimplemented) function
 ; --------------------------------------------------
 int13h_nop:
+        push    bp
+        push    es
+        push    ax
+
+        mov     ax, ROM_SEG
+        mov     es, ax
+        mov     ah, 0x13
+        mov     bp, STUB_S
+        int     0x10
+
+        pop     ax
+        xchg    ah, al
+        call    lcd_printbyte
+        xchg    ah, al
+        pop     es
+        pop     bp
+
         ret
 
 ; --------------------------------------------------
@@ -94,6 +177,7 @@ get_status_of_last_drive_operation:
 ;  AH - status code
 ;  AL - number of sectors read
 read_sectors_from_drive:
+        push    ax
         push    bx
         push    cx
         push    dx
@@ -106,11 +190,20 @@ read_sectors_from_drive:
         xor     ch, ch
         ; AX = LBA, CX = number of sectors to read
 
-        ; TODO: Read sectors from uSD card
+.read_sector:
+        push    ax
+        call    sdc_read_single_block
+        ; TODO: Error handling
+        pop     ax
+        add     bx, 512
+        inc     ax
+        loop    .read_sector
 
         pop     dx
         pop     cx
         pop     bx
+        pop     ax
+        xor     ah, ah
 
         ret
 
@@ -131,6 +224,7 @@ read_sectors_from_drive:
 ;   AH - status code
 ;   AL - number of sectors written
 write_sectors_to_drive:
+        push    ax
         push    bx
         push    cx
         push    dx
@@ -143,11 +237,20 @@ write_sectors_to_drive:
         xor     ch, ch
         ; AX = LBA, CX = number of sectors to write
 
-        ; TODO: Read sectors from uSD card
+.write_sector:
+        push    ax
+        call    sdc_write_single_block
+        ; TODO: Error handling
+        pop     ax
+        add     bx, 512
+        inc     ax
+        loop    .write_sector
 
         pop     dx
         pop     cx
         pop     bx
+        pop     ax
+        xor     ah, ah
 
         ret
 
@@ -168,11 +271,21 @@ write_sectors_to_drive:
 ;       Sector count = CL[5:0]
 ;   BL - drive type (only AT/PS2 floppies)
 read_drive_parameters:
-        mov     ah, -1
-        lodsb
-        mov     cx, \
-                        (DISK_CYLINDER_LAST & 0xFF) << 8 | \
-                        DISK_CYLINDER_LAST >> 2 & 0xC0 | DISK_SECTOR_LAST
-        mov     dh, DISK_HEAD_LAST
-        mov     dl, -1
-        mov     bl, -1
+        ; TODO - what the hell is this? Did I write it?
+        ; mov     ah, -1
+        ; lodsb
+        ; mov     cx, \
+        ;                 (DISK_CYLINDER_LAST & 0xFF) << 8 | \
+        ;                 DISK_CYLINDER_LAST >> 2 & 0xC0 | DISK_SECTOR_LAST
+        ; mov     dh, DISK_HEAD_LAST
+        ; mov     dl, -1
+        ; mov     bl, -1
+        ret
+
+; --------------------------------------------------
+; Function 41h: Test extensions
+; --------------------------------------------------
+test_extensions:
+        stc     ; Extensions not supported; maybe I'll implement them someday since I'm converting CHS to LBA anyway
+
+        ret

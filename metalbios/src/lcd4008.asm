@@ -15,8 +15,21 @@
 
         section .rodata
 
+%macro skipchar 1
+        %rep %1
+        db 0b11011
+        db 0b11011
+        db 0b11011
+        db 0b11011
+        db 0b11011
+        db 0b00000
+        db 0b11011
+        db 0b00000
+        %endrep
+%endmacro
+
 CHAR_DATA:
-        ; 0x80 - Trident
+; 0x80 - Trident
         db 0b00100
         db 0b10101
         db 0b10101
@@ -26,41 +39,231 @@ CHAR_DATA:
         db 0b11111
         db 0b00100
 
-        ; 0x81-0x8F
-times 15*8      db      0
-        ; 0x90-0x9F
-times 16*8      db      0
-        ; 0xA0-0xA4
-times 5*8       db      0
-        ; 0xA5 - ¥
-times 1*8       db      0
-        ; 0xA6-0xA9
-times 4*8       db      0
-        ; 0xAA - ª
-times 1*8       db      0
-        ; 0xAB-0xAE
-times 4*8       db      0
-        ; 0xAF - ¯
-times 1*8       db      0
-        ; 0xB0-0xB1
-times 2*8       db      0
-        ; 0xB2 - ²
-times 1*8       db      0
-        ; 0xB3 - ³
-times 1*8       db      0
-        ; 0xB4 - ´
-times 1*8       db      0
-        ; 0xB5-0xB9
-times 5*8       db      0
-        ; 0xBA - º
-times 1*8       db      0
-        ; 0xBB-0xBE
-times 4*8       db      0
-        ; 0xBF - ¿
-times 1*8       db      0
-        ; 0xC0-0xCE - ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎ
-times 15*8      db      0
-        ; 0xCF - Ï
+; 0x81-0x8F
+        skipchar        15
+; 0x90-0x9F
+        skipchar        16
+; 0xA0-0xA4
+        skipchar        5
+; 0xA5 - ¥
+        db 0b00001
+        db 0b11111
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b00000
+; 0xA6-0xA9
+        skipchar        4
+; 0xAA - ª
+        db 0b01110
+        db 0b10001
+        db 0b10000
+        db 0b11110
+        db 0b10000
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; 0xAB-0xAE
+        skipchar        4
+; 0xAF - ¯
+        db 0b01010
+        db 0b01110
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b01110
+        db 0b00000
+; 0xB0-0xB1
+        skipchar        2
+; 0xB2 - ²
+        db 0b01110
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b01110
+        db 0b00000
+; 0xB3 - ³
+        db 0b00100
+        db 0b00000
+        db 0b01100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b01110
+        db 0b00000
+; 0xB4 - ´
+        db 0b00000
+        db 0b00001
+        db 0b11111
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b00000
+; 0xB5-0xB9
+        skipchar        5
+; 0xBA - º
+        db 0b00000
+        db 0b00000
+        db 0b01110
+        db 0b10001
+        db 0b11100
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; 0xBB-0xBE
+        skipchar        4
+; 0xBF - ¿
+        db 0b01010
+        db 0b00000
+        db 0b01100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b01110
+        db 0b00000
+; 0xC0-0xCE - ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ
+; À
+        db 0b00100
+        db 0b01010
+        db 0b10001
+        db 0b10001
+        db 0b11111
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; Á
+        db 0b11111
+        db 0b10000
+        db 0b10000
+        db 0b11110
+        db 0b10001
+        db 0b10001
+        db 0b11110
+        db 0b00000
+; Â
+        db 0b11110
+        db 0b10001
+        db 0b10001
+        db 0b11110
+        db 0b10001
+        db 0b10001
+        db 0b11110
+        db 0b00000
+; Ã
+        db 0b11111
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b00000
+; Ä
+        db 0b01110
+        db 0b01010
+        db 0b01010
+        db 0b01010
+        db 0b01010
+        db 0b01010
+        db 0b11111
+        db 0b10001
+; Å
+        db 0b11111
+        db 0b10000
+        db 0b10000
+        db 0b11110
+        db 0b10000
+        db 0b10000
+        db 0b11111
+        db 0b00000
+; Æ
+        db 0b10101
+        db 0b10101
+        db 0b01110
+        db 0b00100
+        db 0b01110
+        db 0b10101
+        db 0b10101
+        db 0b00000
+; Ç
+        db 0b01110
+        db 0b10001
+        db 0b00001
+        db 0b00110
+        db 0b00001
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; È
+        db 0b10001
+        db 0b10001
+        db 0b10011
+        db 0b10101
+        db 0b11001
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; É
+        db 0b00100
+        db 0b10001
+        db 0b10011
+        db 0b10101
+        db 0b11001
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; Ê
+        db 0b10001
+        db 0b10010
+        db 0b10100
+        db 0b11000
+        db 0b10100
+        db 0b10010
+        db 0b10001
+        db 0b00000
+; Ë
+        db 0b00011
+        db 0b00101
+        db 0b01001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; Ì
+        db 0b10001
+        db 0b10001
+        db 0b11011
+        db 0b10101
+        db 0b10101
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; Í
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b11111
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; Î
+        db 0b01110
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; Ï
         db 0b11111
         db 0b10001
         db 0b10001
@@ -69,16 +272,398 @@ times 15*8      db      0
         db 0b10001
         db 0b10001
         db 0b00000
-        ; 0xD0-0xD9 - ÐÑÒÓÔÕÖ×ØÙ
-times 10*8      db      0
-        ; 0xDA-0xDB - russian garbage
-times 2*8       db      0
-        ; 0xDC - Ü
-times 1*8       db      0
-        ; 0xDD - russian garbage
-times 1*8       db      0
-        ; 0xDE-0xDF - Þß
-times 2*8       db      0
+; 0xD0-0xDE - ÐÑÒÓÔÕÖ×ØÙ
+; Ð
+        db 0b11110
+        db 0b10001
+        db 0b10001
+        db 0b11110
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b00000
+; Ñ
+        db 0b01110
+        db 0b10001
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; Ò
+        db 0b11111
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00000
+; Ó
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b01010
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00000
+; Ô
+        db 0b00100
+        db 0b01110
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b01110
+        db 0b00100
+        db 0b00000
+; Õ
+        db 0b10001
+        db 0b10001
+        db 0b01010
+        db 0b00100
+        db 0b01010
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; Ö
+        db 0b10010
+        db 0b10010
+        db 0b10010
+        db 0b10010
+        db 0b10010
+        db 0b10010
+        db 0b11111
+        db 0b00001
+; ×
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b11111
+        db 0b00001
+        db 0b00001
+        db 0b00001
+        db 0b00000
+; Ø
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b11111
+        db 0b00000
+; Ù
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b11111
+        db 0b00001
+; 0xDA-0xDB - russian garbage
+        skipchar        2
+; 0xDC - Ü
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b11110
+        db 0b10001
+        db 0b10001
+        db 0b11110
+        db 0b00000
+; 0xDD - russian garbage
+        skipchar        1
+; 0xDE-0xDF - Þß
+; Þ
+        db 0b10010
+        db 0b10101
+        db 0b10101
+        db 0b11101
+        db 0b10101
+        db 0b10101
+        db 0b10010
+        db 0b00000
+; ß
+        db 0b01111
+        db 0b10001
+        db 0b10001
+        db 0b01111
+        db 0b00101
+        db 0b01001
+        db 0b10001
+        db 0b00000
+; 0xE0-0xEF - àáâãäåæçèéêëìíîï
+; à
+        db 0b00000
+        db 0b00000
+        db 0b01110
+        db 0b00001
+        db 0b01111
+        db 0b10001
+        db 0b01111
+        db 0b00000
+; á
+        db 0b00000
+        db 0b00000
+        db 0b11111
+        db 0b10000
+        db 0b11110
+        db 0b10001
+        db 0b11110
+        db 0b00000
+; â
+        db 0b00000
+        db 0b00000
+        db 0b11110
+        db 0b10001
+        db 0b11110
+        db 0b10001
+        db 0b11110
+        db 0b00000
+; ã
+        db 0b00000
+        db 0b00000
+        db 0b11111
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b10000
+        db 0b00000
+; ä
+        db 0b00000
+        db 0b00000
+        db 0b00000
+        db 0b01110
+        db 0b01010
+        db 0b01010
+        db 0b11111
+        db 0b10001
+; å
+        db 0b00000
+        db 0b00000
+        db 0b01110
+        db 0b10001
+        db 0b11111
+        db 0b10000
+        db 0b01110
+        db 0b00000
+; æ
+        db 0b00000
+        db 0b00000
+        db 0b10101
+        db 0b10101
+        db 0b01110
+        db 0b10101
+        db 0b10101
+        db 0b00000
+; ç
+        db 0b00000
+        db 0b00000
+        db 0b01110
+        db 0b10001
+        db 0b00110
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; è
+        db 0b00000
+        db 0b00000
+        db 0b10001
+        db 0b10011
+        db 0b10101
+        db 0b11001
+        db 0b10001
+        db 0b00000
+; é
+        db 0b00000
+        db 0b00100
+        db 0b10001
+        db 0b10011
+        db 0b10101
+        db 0b11001
+        db 0b10001
+        db 0b00000
+; ê
+        db 0b00000
+        db 0b00000
+        db 0b01001
+        db 0b01010
+        db 0b01100
+        db 0b01010
+        db 0b01001
+        db 0b00000
+; ë
+        db 0b00000
+        db 0b00000
+        db 0b00011
+        db 0b00101
+        db 0b01001
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; ì
+        db 0b00000
+        db 0b00000
+        db 0b10001
+        db 0b11011
+        db 0b10101
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; í
+        db 0b00000
+        db 0b00000
+        db 0b10001
+        db 0b10001
+        db 0b11111
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; î
+        db 0b00000
+        db 0b00000
+        db 0b01110
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; ï
+        db 0b00000
+        db 0b00000
+        db 0b11111
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b10001
+        db 0b00000
+; 0xF0-0xFE - ðñòóôõö÷øù
+; ð
+        db 0b00000
+        db 0b00000
+        db 0b11110
+        db 0b10001
+        db 0b11110
+        db 0b10000
+        db 0b10000
+        db 0b00000
+; ñ
+        db 0b00000
+        db 0b00000
+        db 0b01110
+        db 0b10001
+        db 0b10000
+        db 0b10001
+        db 0b01110
+        db 0b00000
+; ò
+        db 0b00000
+        db 0b00000
+        db 0b11111
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00100
+        db 0b00000
+; ó
+        db 0b00000
+        db 0b00000
+        db 0b10001
+        db 0b10001
+        db 0b01010
+        db 0b00100
+        db 0b00100
+        db 0b00000
+; ô
+        db 0b00000
+        db 0b00000
+        db 0b00100
+        db 0b01110
+        db 0b10101
+        db 0b01110
+        db 0b00100
+        db 0b00000
+; õ
+        db 0b00000
+        db 0b00000
+        db 0b10001
+        db 0b01010
+        db 0b00100
+        db 0b01010
+        db 0b10001
+        db 0b00000
+; ö
+        db 0b00000
+        db 0b00000
+        db 0b10010
+        db 0b10010
+        db 0b10010
+        db 0b10010
+        db 0b11111
+        db 0b00001
+; ÷
+        db 0b00000
+        db 0b00000
+        db 0b10001
+        db 0b10001
+        db 0b11111
+        db 0b00001
+        db 0b00001
+        db 0b00000
+; ø
+        db 0b00000
+        db 0b00000
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b11111
+        db 0b00000
+; ù
+        db 0b00000
+        db 0b00000
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b10101
+        db 0b11111
+        db 0b00001
+; 0xFA-0xFB - russian garbage
+        skipchar        2
+; 0xFC - ü
+        db 0b00000
+        db 0b00000
+        db 0b10000
+        db 0b10000
+        db 0b11110
+        db 0b10001
+        db 0b11110
+        db 0b00000
+; 0xFD - russian garbage
+        skipchar        1
+; 0xFE-0xFF - þÿ
+; þ
+        db 0b00000
+        db 0b00000
+        db 0b10010
+        db 0b10101
+        db 0b11101
+        db 0b10101
+        db 0b10010
+        db 0b00000
+; ÿ
+        db 0b00000
+        db 0b00000
+        db 0b00111
+        db 0b01001
+        db 0b00111
+        db 0b01001
+        db 0b10001
+        db 0b00000
+
 
 CHAR_DATA_LEN   equ     $ - CHAR_DATA
 
@@ -241,7 +826,8 @@ lcd_printchar:
         ; TODO: CR/LF if X = 39
         call    cmd_write_data_increment_adp
         inc     cl
-        mov     [es:BDA_CURSOR_POS_P1], cx
+        ; mov     [es:BDA_CURSOR_POS_P1], cx
+        call    lcd_gotoxy
         jmp     .end
 
 .cr:  ; X = 0
