@@ -32,14 +32,11 @@
         section .rodata
 
 HELLO_S         db      "               ",0x80," ПK-88 ", 0x80, 13, 10, 0
-MEMTEST_S       db      "Перевірка пам'яті", 0
-MEMTEST_OK_S    db      " ФАЙНО", 13, 10, 0
-MEMTEST_FAIL_S  db      " НЕ ОК @ ", 0
-SD_OK_S         db      "SD-карта ФАЙНА", 13, 10, 0
-SD_FAIL_S       db      "SD-карта НЕ ОК: ", 0
-
-        ; %include "lcd.asm"
-        ; %include "interrupt.asm"
+MEMTEST_S       db      "Перевірка пам'яті: ", 0
+MEMTEST_OK_S    db      "ФАЙНО", 13, 10, 0
+MEMTEST_FAIL_S  db      "НЕ ОК @ ", 0
+SD_OK_S         db      "SD-карта: ФАЙНА", 13, 10, 0
+SD_FAIL_S       db      "SD-карта: НЕ ОК: ", 0
 
         section .text
 
@@ -68,14 +65,20 @@ init:
         ; +---------- 1: Mode set flag
         out     dx, al
 
+        ; Init base I/O
         call    lcd_init
         call    uart_init
         call    equipment_list_init
         call    interrupt_init
         call    pit_init
 
-        mov     bx, ROM_SEG
-        mov     es, bx
+        ; Welcome message
+        mov     ax, ROM_SEG
+        mov     es, ax
+        mov     bp, HELLO_S
+        call    lcd_printstr
+
+        ; Memory test
         mov     bp, MEMTEST_S
         call    lcd_printstr
         call    memtest
@@ -106,13 +109,7 @@ init:
         call    lcd_printchar
 .memtest_end:
 
-        ; Print string
-        mov     ax, ROM_SEG
-        mov     es, ax
-        mov     ah, 0x13
-        mov     bp, HELLO_S
-        int     0x10
-
+        ; Init SD card
         call    sdc_init
 
         mov     bx, ROM_SEG
@@ -140,75 +137,6 @@ init:
 
         sti
 
-        ; xor     ax, ax
-        ; mov     es, ax
-        ; mov     ah, 0x02
-        ; mov     al, 8  ; Read 8 sectors
-        ; mov     ch, 0  ; Cylinder 0
-        ; mov     cl, 1  ; Sector 1
-        ; mov     dh, 0  ; Head 0
-        ; mov     dl, 0  ; Drive 0
-        ; mov     bx, 0x7E00
-        ; int     0x13
-
-        ; jmp     $
-
-;         mov     ax, 0x2000
-;         mov     es, ax
-;
-;         ; Read first sector
-;         xor     bx, bx
-;         xor     ax, ax
-;         call    sdc_read_single_block
-;
-;         ; Init test data
-;         xor     bx, bx
-;         mov     cx, 0x200
-; .write:
-;         mov     [es:bx], cl
-;         inc     bx
-;         loop    .write
-;
-;         ; Write sector 0xFFF0
-;         xor     bx, bx
-;         mov     ax, 0xFFF0
-;         call    sdc_write_single_block
-;
-;         ; Read sector 0xFFF0
-;         xor     bx, bx
-;         mov     ax, 0xFFF0
-;         call    sdc_read_single_block
-;
-;         ; Send stuff to UART
-;         mov     al, 0x20
-; .send:
-;         call    uart_send
-;         inc     al
-;         cmp     al, 0x7F
-;         jne     .send
-
-        ; Write to SPI
-        ; mov     al, 0x42
-        ; call    spi_xfer
-        ; mov     ah, 0x0E
-        ; int     0x10
-        ; mov     al, 0xAF
-        ; call    spi_xfer
-        ; mov     ah, 0x0E
-        ; int     0x10
-
-;         xor     dx, dx
-;         mov     ds, dx
-; .again:
-;         xor     ax, ax
-;         in      al, dx
-;         mov     bx, ax
-;         mov     al, [ds:bx]
-;         out     dx, al
-;         jmp     .again
-
-        ; jmp     $
-
         ; https://thestarman.pcministry.com/asm/mbr/95BMEMBR.htm
         ; Load bootsector
         xor     ax, ax
@@ -217,18 +145,6 @@ init:
         call    sdc_read_single_block
         ; Execute bootsector
         jmp     0x0000:0x7C00
-
-;         ; Delay 65536 iterations (~557 (524?) ms)
-;         ; (1 iteration takes ~8 us)
-; delay:
-;         inc cx
-;         cmp cx, 0
-;         jne delay
-
-
-
-; times 0x10000-($-START)-16 \
-;         db      0xAD
 
         section .reset
 reset:

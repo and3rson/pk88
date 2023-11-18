@@ -55,8 +55,8 @@ memtest:
         cmp     bx, 0xF000      ; End of RAM?
         je      .success        ; Yes, end
 
-        mov     al, '.'
-        call    lcd_printchar
+        ; mov     al, '.'
+        ; call    lcd_printchar
 
         ; Start next segment
         mov     es, bx
