@@ -35,8 +35,8 @@ HELLO_S         db      "               ",0x80," ПK-88 ", 0x80, 13, 10, 0
 MEMTEST_S       db      "Перевірка пам'яті: ", 0
 MEMTEST_OK_S    db      "ФАЙНО", 13, 10, 0
 MEMTEST_FAIL_S  db      "НЕ ОК @ ", 0
-SD_OK_S         db      "SD-карта: ФАЙНА", 13, 10, 0
-SD_FAIL_S       db      "SD-карта: НЕ ОК: ", 0
+SD_OK_S         db      "SD-карта:          ФАЙНА", 13, 10, 0
+SD_FAIL_S       db      "SD-карта:          НЕ ОК: ", 0
 
         section .text
 
