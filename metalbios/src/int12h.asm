@@ -11,8 +11,6 @@
 
 MEMORY  equ     640
 
-; https://stanislavs.org/helppc/int_12.html
-
         section .text
 
 ; --------------------------------------------------
