@@ -29,6 +29,7 @@ SDC_HEADER      equ     0b01000000
         global  sdc_init
 sdc_init:
         ; Init lines
+        push    bx      ; Clobbered by read
         push    cx
 
         mov     al, 0b00000000
@@ -155,6 +156,7 @@ sdc_init:
         call    disable
 
         pop     cx
+        pop     bx
         ret
 
 ; --------------------------------------------------
@@ -169,6 +171,9 @@ sdc_init:
 sdc_read_single_block:
         push    bx
         push    cx
+        push    di
+
+        mov     di, bx
 
         call    enable
 
@@ -187,8 +192,8 @@ sdc_read_single_block:
         mov     cx, 512
 .next:
         call    read
-        mov     [es:bx], al
-        inc     bx
+        mov     [es:di], al
+        inc     di
         loop    .next
 
         ; Read CRC
@@ -207,6 +212,7 @@ sdc_read_single_block:
 .end:
         call    disable
 
+        pop     di
         pop     cx
         pop     bx
         ret
@@ -444,6 +450,7 @@ cmd24_write_block:
 ; Clobbers:
 ;   AH
 wait_byte:
+        push    bx      ; Clobbered by read
         push    cx
 
         mov     cx, 0x100
@@ -454,6 +461,7 @@ wait_byte:
         loop    .again
 .end:
         pop     cx
+        pop     bx
         ret
 
 ; --------------------------------------------------
@@ -578,9 +586,8 @@ write:
 ; Return:
 ;   AL - byte read from SPI
 ; Clobbers:
-;   AH
+;   AH, BX
 read:
-        push    bx
         push    cx
 
         mov     cx, 8
@@ -592,15 +599,27 @@ read:
         ; TODO: add delay?
         xchg    al, ah
         in      al, UA_MSR      ; Read MISO
-        and     al, 0b00010000  ; MISO
-        jz      .got1           ; MISO = 1 (/CTS = 0)
-.got0:
-        clc
-        jmp     .gotok
-.got1:
-        stc
-.gotok:
-        rcl     bl, 1
+
+        ; Old approach
+;         and     al, 0b00010000  ; MISO                          ; 3
+;         jz      .got1           ; MISO = 1 (/CTS = 0)           ; 16 / 4
+; .got0:
+;         clc                                                     ; 2
+;         jmp     .gotok                                          ; 15
+; .got1:
+;         stc                                                     ; 2
+; .gotok:
+;         rcl     bl, 1                                           ; 1
+        ; Total for 0: 3 + 4 + 2 + 15 + 1 = 25
+        ; Total for 1: 3 + 16 + 2 + 1 = 22
+
+        ; New approach
+        and     al, 0b00010000  ; MISO                          ; 3
+        add     al, 0xFF        ; Set CF if MISO = 0            ; 4
+        rcl     bl, 1                                           ; 2
+        xor     bl, 0xFE        ; Flip last bit                 ; 4
+        ; Total: 3 + 4 + 2 + 4 = 13
+
         xchg    al, ah
         ; Read end
         or      al, 0b00000001  ; SCK = 0
@@ -609,8 +628,8 @@ read:
         loop    .next
 
         mov     al, bl
+
         pop     cx
-        pop     bx
         ret
 
 
