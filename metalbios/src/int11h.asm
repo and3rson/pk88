@@ -9,6 +9,8 @@
         cpu     8086
         bits    16
 
+        %include "macros.inc"
+
 NUM_PRINTERS            equ     0  ; 2 bits
 INTERNAL_MODEM          equ     0  ; 1 bit
 GAME_ADAPTER            equ     0  ; 1 bit
@@ -66,4 +68,4 @@ int11h_isr:
         pop     ax
 
         clc
-        iret
+        iretc

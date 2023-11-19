@@ -10,6 +10,7 @@
         bits    16
 
         %include "sys.inc"
+        %include "macros.inc"
 
         extern  lcd_write
         extern  lcd_busy
@@ -42,7 +43,7 @@ int16h_isr:
 
         pop     bx
 
-        iret
+        iretc
 
 int16h_function_table:
         dw      wait_for_keypress  ; ELKS

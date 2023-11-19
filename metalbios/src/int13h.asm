@@ -11,6 +11,7 @@
 
         %include "sys.inc"
         %include "disk.inc"
+        %include "macros.inc"
 
         extern  disk_chs_to_lba
         extern  sdc_read_single_block
@@ -43,7 +44,7 @@ int13h_isr:
 
         pop     bx
 
-        iret
+        iretc
 
 int13h_function_table:
         ; https://en.wikipedia.org/wiki/INT_13H#List_of_INT_13h_services

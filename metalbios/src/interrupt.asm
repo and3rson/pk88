@@ -11,6 +11,7 @@
 
         %include "sys.inc"
         %include "ports.inc"
+        %include "macros.inc"
 
         extern  int08h_isr
         extern  int10h_isr
@@ -284,4 +285,4 @@ isr_stub:
         pop     cx
 
         stc
-        iret
+        iretc

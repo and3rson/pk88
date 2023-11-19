@@ -9,6 +9,8 @@
         cpu     8086
         bits    16
 
+        %include "macros.inc"
+
 MEMORY  equ     640
 
         section .text
@@ -21,4 +23,4 @@ int12h_isr:
         mov     ax, MEMORY
 
         clc
-        iret
+        iretc

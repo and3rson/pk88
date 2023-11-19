@@ -9,6 +9,8 @@
         cpu     8086
         bits    16
 
+        %include "macros.inc"
+
         extern  lcd_printchar
         extern  lcd_printstr
 
@@ -34,7 +36,7 @@ int10h_isr:
 
         pop     bx
 
-        iret
+        iretc
 
 int10h_function_table:
         dw      set_video_mode

@@ -617,7 +617,7 @@ read:
         and     al, 0b00010000  ; MISO                          ; 3
         add     al, 0xFF        ; Set CF if MISO = 0            ; 4
         rcl     bl, 1                                           ; 2
-        xor     bl, 0xFE        ; Flip last bit                 ; 4
+        xor     bl, 0x01        ; Flip last bit                 ; 4
         ; Total: 3 + 4 + 2 + 4 = 13
 
         xchg    al, ah

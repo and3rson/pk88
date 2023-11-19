@@ -10,6 +10,8 @@
         cpu     8086
         bits    16
 
+        %include "macros.inc"
+
         section .text
 
         extern  uart_init
@@ -38,7 +40,7 @@ int14h_isr:
 
         pop     bx
 
-        iret
+        iretc
 
 int14h_function_table:
         dw      init_serial_port
