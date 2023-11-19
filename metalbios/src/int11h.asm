@@ -65,4 +65,5 @@ int11h_isr:
         pop     es
         pop     ax
 
+        clc
         iret

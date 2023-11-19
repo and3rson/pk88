@@ -75,6 +75,7 @@ int16h_nop:
         pop     es
         pop     bp
 
+        stc
         ret
 
 ; --------------------------------------------------
@@ -84,6 +85,7 @@ int16h_nop:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special key
 wait_for_keypress:
+        stc
         ret
 
 ; --------------------------------------------------
@@ -95,4 +97,5 @@ wait_for_keypress:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special function key
 peek_char:
+        stc
         ret

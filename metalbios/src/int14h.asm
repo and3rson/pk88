@@ -59,6 +59,7 @@ int14h_function_table:
 ;       AL[1:0] - byte size (00=5, 01=6, 10=7, 11=8)
 init_serial_port:
         call    uart_init
+        clc
         ret
 
 ; --------------------------------------------------
@@ -71,6 +72,7 @@ init_serial_port:
 transmit_byte:
         call    uart_send
         xor     ah, ah
+        clc
         ret
 
 ; --------------------------------------------------
@@ -84,6 +86,7 @@ transmit_byte:
 receive_byte:
         call    uart_receive
         xor     ah, ah
+        clc
         ret
 
 ; --------------------------------------------------
@@ -114,4 +117,5 @@ serial_port_status:
         call    uart_line_status
         xchg    al, ah
         call    uart_modem_status
+        clc
         ret

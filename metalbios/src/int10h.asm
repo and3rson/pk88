@@ -75,90 +75,105 @@ int10h_function_table:
 ; No-op (unimplemented) function
 ; --------------------------------------------------
 int10h_nop:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 00h: Set video mode
 ; --------------------------------------------------
 set_video_mode:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 01h: Set cursor shape
 ; --------------------------------------------------
 set_cursor_shape:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 02h: Set cursor position
 ; --------------------------------------------------
 set_cursor_position:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 03h: Get cursor position and shape
 ; --------------------------------------------------
 get_cursor_position_and_shape:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 04h: Get light pen position
 ; --------------------------------------------------
 get_light_pen_position:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 05h: Set display page
 ; --------------------------------------------------
 set_display_page:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 06h: Scroll screen up
 ; --------------------------------------------------
 scroll_screen_up:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 07h: Scroll screen down
 ; --------------------------------------------------
 scroll_screen_down:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 08h: Read character and attribute at cursor
 ; --------------------------------------------------
 read_character_and_attribute_at_cursor:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 09h: Write character and attribute at cursor
 ; --------------------------------------------------
 write_character_and_attribute_at_cursor:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 0Ah: Write character only at cursor
 ; --------------------------------------------------
 write_character_only_at_cursor:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 0Bh: Set border color
 ; --------------------------------------------------
 set_border_color:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 0Ch: Write graphics pixel
 ; --------------------------------------------------
 write_graphics_pixel:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 0Dh: Read graphics pixel
 ; --------------------------------------------------
 read_graphics_pixel:
+        stc
         ret
 
 ; --------------------------------------------------
@@ -172,24 +187,28 @@ read_graphics_pixel:
 ;   BL - foreground color (ignored)
 write_character_in_tty_mode:
         call    lcd_printchar
+        clc
         ret
 
 ; --------------------------------------------------
 ; Function 0Fh: Get video mode
 ; --------------------------------------------------
 get_video_mode:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 10h: Set palette registers
 ; --------------------------------------------------
 set_palette_registers:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 11h: Character generator
 ; --------------------------------------------------
 character_generator:
+        stc
         ret
 
 ; --------------------------------------------------
@@ -219,6 +238,7 @@ alternate_select_functions:
 ;   ES:BP - string
 write_string:
         call    lcd_printstr
+        clc
         ret
 
 
@@ -226,16 +246,19 @@ write_string:
 ; Function 1Ah: Get or set display combination code
 ; --------------------------------------------------
 get_or_set_display_combination_code:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 1Bh: Get functionality information
 ; --------------------------------------------------
 get_functionality_information:
+        stc
         ret
 
 ; --------------------------------------------------
 ; Function 1Ch: Save or restore video state
 ; --------------------------------------------------
 save_or_restore_video_state:
+        stc
         ret

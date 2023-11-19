@@ -137,6 +137,7 @@ int13h_nop:
         pop     es
         pop     bp
 
+        stc
         ret
 
 ; --------------------------------------------------
@@ -145,6 +146,7 @@ int13h_nop:
 ; Args:
 ;   AH - function number (0x00)
 reset_disk_system:
+        clc
         ret
 
 ; --------------------------------------------------
@@ -158,6 +160,7 @@ reset_disk_system:
 ;   Carry flag set on error
 ;   AH - status code
 get_status_of_last_drive_operation:
+        stc
         ret
 
 ; --------------------------------------------------
@@ -205,6 +208,7 @@ read_sectors_from_drive:
         pop     ax
         xor     ah, ah
 
+        clc
         ret
 
 ; --------------------------------------------------
@@ -252,6 +256,7 @@ write_sectors_to_drive:
         pop     ax
         xor     ah, ah
 
+        clc
         ret
 
 ; --------------------------------------------------
@@ -280,6 +285,7 @@ read_drive_parameters:
         ; mov     dh, DISK_HEAD_LAST
         ; mov     dl, -1
         ; mov     bl, -1
+        stc
         ret
 
 ; --------------------------------------------------
@@ -287,5 +293,4 @@ read_drive_parameters:
 ; --------------------------------------------------
 test_extensions:
         stc     ; Extensions not supported; maybe I'll implement them someday since I'm converting CHS to LBA anyway
-
         ret

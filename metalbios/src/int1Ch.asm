@@ -15,4 +15,5 @@
         global  int1Ch_isr
 int1Ch_isr:
         ; no-op
+        clc
         iret

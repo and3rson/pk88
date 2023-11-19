@@ -20,4 +20,5 @@ MEMORY  equ     640
 int12h_isr:
         mov     ax, MEMORY
 
+        clc
         iret

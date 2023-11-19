@@ -283,4 +283,5 @@ isr_stub:
         pop     ax
         pop     cx
 
+        stc
         iret
