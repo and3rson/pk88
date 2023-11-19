@@ -143,6 +143,17 @@ init:
         mov     es, ax
         mov     bx, 0x7C00
         call    sdc_read_single_block
+        ; Initialize segments
+        xor     ax, ax
+        mov     ds, ax
+        mov     es, ax
+        ; Init stack at 0x0000:0x0400
+        xor     ax, ax
+        mov     ss, ax
+        mov     sp, 0x0400
+        ; Tell bootsector that we are booting from HDD
+        mov     dl, 0x80
+        xor     dh, dh          ; bit 5 is 0 - means that device is supported via int 13h
         ; Execute bootsector
         jmp     0x0000:0x7C00
 
