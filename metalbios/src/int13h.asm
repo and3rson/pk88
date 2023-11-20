@@ -197,12 +197,21 @@ read_sectors_from_drive:
 .read_sector:
         push    ax
         call    sdc_read_single_block
-        ; TODO: Error handling
+        test    ax, ax
         pop     ax
+        jnz     .err
         add     bx, 512
         inc     ax
         loop    .read_sector
 
+.ok:
+        clc
+        jmp     .end
+
+.err:
+        stc
+
+.end:
         pop     dx
         pop     cx
         pop     bx
@@ -245,19 +254,27 @@ write_sectors_to_drive:
 .write_sector:
         push    ax
         call    sdc_write_single_block
-        ; TODO: Error handling
+        test    ax, ax
         pop     ax
+        jnz     .err
         add     bx, 512
         inc     ax
         loop    .write_sector
 
+.ok:
+        clc
+        jmp     .end
+
+.err:
+        stc
+
+.end:
         pop     dx
         pop     cx
         pop     bx
         pop     ax
         xor     ah, ah
 
-        clc
         ret
 
 ; --------------------------------------------------
@@ -277,16 +294,14 @@ write_sectors_to_drive:
 ;       Sector count = CL[5:0]
 ;   BL - drive type (only AT/PS2 floppies)
 read_drive_parameters:
-        ; TODO - what the hell is this? Did I write it?
-        ; mov     ah, -1
-        ; lodsb
-        ; mov     cx, \
-        ;                 (DISK_CYLINDER_LAST & 0xFF) << 8 | \
-        ;                 DISK_CYLINDER_LAST >> 2 & 0xC0 | DISK_SECTOR_LAST
-        ; mov     dh, DISK_HEAD_LAST
-        ; mov     dl, -1
-        ; mov     bl, -1
-        stc
+        ; TODO: Handle DL?
+        mov     ah, 0x00
+        mov     dl, 0x01
+        mov     dh, DISK_HEAD_LAST
+        mov     ch, DISK_CYLINDER_LAST & 0xFF
+        mov     cl, (DISK_CYLINDER_LAST >> 2 & 0xC0) | DISK_SECTOR_LAST
+
+        clc
         ret
 
 ; --------------------------------------------------
