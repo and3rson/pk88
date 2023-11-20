@@ -27,3 +27,8 @@ lba = chs2lba(*chs, 6, 17)  # 65729
 print(lba)
 assert lba == 615 * 6 * 17 - 1  # Sector index = total sectors - 1
 assert chs == lba2chs(lba, 6, 17)
+
+# print(chs2lba(0, 3, 0x3D, 255, 63))
+# print(hex(chs2lba(0x0FF, 0xFF, 0x0F, 255, 63)))
+
+print(hex(chs2lba(127, 63, 31, 64, 32)))

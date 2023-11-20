@@ -13,6 +13,7 @@
         %include "ports.inc"
         %include "macros.inc"
 
+        extern  int03h_isr
         extern  int08h_isr
         extern  int10h_isr
         extern  int11h_isr
@@ -102,7 +103,7 @@ isr_handlers:
         dw      isr_stub00      ; 0x00 - Divide error
         dw      isr_stub01      ; 0x01 - Single step
         dw      isr_stub02      ; 0x02 - NMI
-        dw      isr_stub03      ; 0x03 - 1-byte int instruction
+        dw      int03h_isr      ; 0x03 - 1-byte int instruction
         dw      isr_stub04      ; 0x04 - Overflow
         dw      isr_stub05      ; 0x05 - Shift-PrtScr
         dw      isr_stub06
@@ -148,11 +149,6 @@ isr_stub01:
 isr_stub02:
         push    cx
         mov     cl, 0x02
-        jmp     isr_stub
-
-isr_stub03:
-        push    cx
-        mov     cl, 0x03
         jmp     isr_stub
 
 isr_stub04:

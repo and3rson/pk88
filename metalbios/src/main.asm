@@ -17,6 +17,7 @@
         extern lcd_printstr
         extern lcd_printword
         extern lcd_printchar
+        extern lcd_printm
         extern memtest
         extern equipment_list_init
         extern interrupt_init
@@ -107,6 +108,7 @@ init:
         call    lcd_printchar
         mov     al, 10
         call    lcd_printchar
+        hlt
 .memtest_end:
 
         ; Init SD card
@@ -131,6 +133,7 @@ init:
         int     0x10
         mov     al, 10
         int     0x10
+        hlt
 .sd_end:
 
         ; Ready!

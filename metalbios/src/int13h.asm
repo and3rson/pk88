@@ -9,6 +9,7 @@
         cpu     8086
         bits    16
 
+        %include "bda.inc"
         %include "sys.inc"
         %include "disk.inc"
         %include "macros.inc"
@@ -17,6 +18,7 @@
         extern  sdc_read_single_block
         extern  sdc_write_single_block
         extern  lcd_printbyte
+        extern  lcd_printword
 
         section .rodata
 
@@ -31,6 +33,7 @@ STUB_S  db      "!0x13:", 0
 ;   AH - function number
         global  int13h_isr
 int13h_isr:
+        push    si
         push    bx  ; Save BX to perform pointer arithmetic
 
         mov     bl, ah
@@ -40,9 +43,11 @@ int13h_isr:
         shl     bx, 1
         mov     bx, [cs:bx+int13h_function_table]
 
-        call    bx  ; Call appropriate function
-
+        mov     si, bx
         pop     bx
+        ; NOTE: SI will be clobbered in the called function
+        call    si  ; Call appropriate function
+        pop     si
 
         iretc
 
@@ -200,6 +205,7 @@ read_sectors_from_drive:
         test    ax, ax
         pop     ax
         jnz     .err
+
         add     bx, 512
         inc     ax
         loop    .read_sector
@@ -218,7 +224,6 @@ read_sectors_from_drive:
         pop     ax
         xor     ah, ah
 
-        clc
         ret
 
 ; --------------------------------------------------

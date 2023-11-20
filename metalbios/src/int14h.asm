@@ -10,6 +10,7 @@
         cpu     8086
         bits    16
 
+        %include "bda.inc"
         %include "macros.inc"
 
         section .text
@@ -27,6 +28,7 @@
 ;   AH - function number
         global  int14h_isr
 int14h_isr:
+        push    si
         push    bx  ; Save BX to perform pointer arithmetic
 
         mov     bl, ah
@@ -36,9 +38,11 @@ int14h_isr:
         shl     bx, 1
         mov     bx, [cs:bx+int14h_function_table]
 
-        call    bx  ; Call appropriate function
-
+        mov     si, bx
         pop     bx
+        ; NOTE: SI will be clobbered in the called function
+        call    si  ; Call appropriate function
+        pop     si
 
         iretc
 

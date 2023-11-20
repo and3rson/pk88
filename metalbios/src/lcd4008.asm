@@ -1,5 +1,4 @@
 ; =====================================================
-; Ï
 ; LCD functions for T6963C LCD (240x64, 40x08 characters)
 ;
 ; This file is part of MetalBIOS for PK-88.
@@ -775,10 +774,14 @@ lcd_clear:
 ; --------------------------------------------------
 ; Args:
 ;   ES:BP - string
+; Return:
+;   AX - number of chars printed (excluding zero terminator)
         global  lcd_printstr
 lcd_printstr:
-        push    ax
+        push    cx
         push    bp
+
+        xor     cx, cx
 
         mov     ah, 1
 .next:
@@ -787,12 +790,44 @@ lcd_printstr:
         je      .done
         call    lcd_printchar
         inc     bp
+        inc     cx
         jmp     .next
 
 .done:
+        mov     ax, cx
+        pop     bp
+        pop     cx
+
+        ret
+
+; --------------------------------------------------
+; Print string that's located directly after the call instruction
+; --------------------------------------------------
+        global  lcd_printm
+lcd_printm:
+        push    si
+        mov     si, sp
+        push    ax
+        push    bp
+        push    es
+
+        ; IP of next instruction = [SI+2]
+
+        ; Load string address
+        mov     ax, ROM_SEG
+        mov     es, ax
+        mov     bp, [ss:si+2]      ; IP
+        call    lcd_printstr
+        ; Update return address to point at instruction right after the printed string
+        add     bp, ax
+        inc     bp      ; Skip zero terminator
+        ; Overwrite return address
+        mov     [ss:si+2], bp
+
+        pop     es
         pop     bp
         pop     ax
-
+        pop     si
         ret
 
 ; --------------------------------------------------

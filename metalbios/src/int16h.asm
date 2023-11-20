@@ -9,6 +9,7 @@
         cpu     8086
         bits    16
 
+        %include "bda.inc"
         %include "sys.inc"
         %include "macros.inc"
 
@@ -30,6 +31,7 @@ STUB_S  db      "!0x16:", 0
 ;   AH - function number
         global  int16h_isr
 int16h_isr:
+        push    si
         push    bx  ; Save BX to perform pointer arithmetic
 
         mov     bl, ah
@@ -39,9 +41,11 @@ int16h_isr:
         shl     bx, 1
         mov     bx, [cs:bx+int16h_function_table]
 
-        call    bx  ; Call appropriate function
-
+        mov     si, bx
         pop     bx
+        ; NOTE: SI will be clobbered in the called function
+        call    si  ; Call appropriate function
+        pop     si
 
         iretc
 
@@ -86,8 +90,9 @@ int16h_nop:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special key
 wait_for_keypress:
-        stc
-        ret
+        hlt
+        ; stc
+        ; ret
 
 ; --------------------------------------------------
 ; Function 0x01 - Peek character from keyboard buffer
@@ -98,5 +103,6 @@ wait_for_keypress:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special function key
 peek_char:
-        stc
-        ret
+        hlt
+        ; stc
+        ; ret

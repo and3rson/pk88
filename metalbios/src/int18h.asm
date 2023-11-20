@@ -27,4 +27,5 @@ int18h_isr:
         mov     ah, 0x13
         mov     bp, BASIC_S
         int     0x10
-        hlt
+        cli
+        jmp     $

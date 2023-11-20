@@ -60,4 +60,9 @@ BDA_VDA_PORT            equ     0x63
 BDA_VDA_INT_MODE_REG    equ     0x65
 BDA_COLOR_PAL           equ     0x66
 
+BDA_RESERVED            equ     0xAC  ; 68 bytes
+; BDA_INT_FUNC_PTR        equ     BDA_RESERVED + 0
+
+BDA_INTRA_APP_COMM_AREA equ     0xF0  ; 16 bytes
+
 %endif

@@ -9,6 +9,7 @@
         cpu     8086
         bits    16
 
+        %include "bda.inc"
         %include "macros.inc"
 
         extern  lcd_printchar
@@ -23,6 +24,7 @@
 ;   AH - function number
         global  int10h_isr
 int10h_isr:
+        push    si
         push    bx  ; Save BX to perform pointer arithmetic
 
         mov     bl, ah
@@ -32,9 +34,11 @@ int10h_isr:
         shl     bx, 1
         mov     bx, [cs:bx+int10h_function_table]
 
-        call    bx  ; Call appropriate function
-
+        mov     si, bx
         pop     bx
+        ; NOTE: SI will be clobbered in the called function
+        call    si  ; Call appropriate function
+        pop     si
 
         iretc
 
@@ -239,7 +243,9 @@ alternate_select_functions:
 ;   AH - function number (0x13)
 ;   ES:BP - string
 write_string:
+        push    ax
         call    lcd_printstr
+        pop     ax
         clc
         ret
 
