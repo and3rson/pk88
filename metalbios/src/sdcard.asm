@@ -591,13 +591,10 @@ read:
         push    cx
 
         mov     cx, 8
-        mov     al, 0b00001011  ; 7..3 = 0, 2 = MOSI, 1 = /CS, 0 = SCK
         xor     bl, bl
 .next:
-        and     al, 0b11111110  ; SCK = 1
+        mov     al, 0b00001010  ; SCK = 1
         out     UA_MCR, al      ; Write SCK
-        ; TODO: add delay?
-        xchg    al, ah
         in      al, UA_MSR      ; Read MISO
 
         ; Old approach
@@ -616,13 +613,12 @@ read:
         ; New approach
         and     al, 0b00010000  ; MISO                          ; 3
         add     al, 0xFF        ; Set CF if MISO = 0            ; 4
+        cmc                     ; Flip CF                       ; 2
         rcl     bl, 1                                           ; 2
-        xor     bl, 0x01        ; Flip last bit                 ; 4
-        ; Total: 3 + 4 + 2 + 4 = 13
+        ; Total: 3 + 4 + 2 + 2 = 11
 
-        xchg    al, ah
         ; Read end
-        or      al, 0b00000001  ; SCK = 0
+        mov     al, 0b00001011  ; SCK = 0
         out     UA_MCR, al      ; Write SCK
 
         loop    .next

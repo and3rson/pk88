@@ -913,6 +913,7 @@ lcd_printchar:
         global  lcd_scrollup
 lcd_scrollup:
         ; Move row 2 to row 1, row 3 to row 2, etc.
+        ; TODO: Interrupts might mess autowrite parts up if they attempt to print to LCD
 
         push    ax
         push    cx

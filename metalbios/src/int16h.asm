@@ -17,6 +17,7 @@
         extern  lcd_busy
         extern  lcd_print
         extern  lcd_printbyte
+        extern  lcd_printm
 
         section .rodata
 
@@ -90,6 +91,8 @@ int16h_nop:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special key
 wait_for_keypress:
+        call    lcd_printm
+        db      "!WFK", 13, 10, 0
         hlt
         ; stc
         ; ret
@@ -103,6 +106,8 @@ wait_for_keypress:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special function key
 peek_char:
+        call    lcd_printm
+        db      "!PC", 13, 10, 0
         hlt
         ; stc
         ; ret
