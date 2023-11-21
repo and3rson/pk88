@@ -858,23 +858,45 @@ lcd_printchar:
         sub     al, 0x20
 
 .char:
-        ; TODO: CR/LF if X = 39
+        ; Print ASCII char
+
         call    cmd_write_data_increment_adp
         inc     cl
+        cmp     cl, 40
+        je      .crlf
         ; mov     [es:BDA_CURSOR_POS_P1], cx
         call    lcd_gotoxy
         jmp     .end
 
-.cr:  ; X = 0
+.cr:
+        ; Print CR (X := 0)
         xor     cl, cl
         call    lcd_gotoxy
         jmp     .end
-.lf:  ; Y = Y + 1
+
+.lf:
+        ; Print LF (Y := Y + 1)
         ; TODO: Scroll display if Y = 7
         ; Calculate new cursor pos
         inc     ch
+        cmp     ch, 8
+        je      .scrollup
         call    lcd_gotoxy
         jmp     .end
+
+.crlf:
+        ; Print both CR & LF
+        xor     cl, cl
+        inc     ch
+        cmp     ch, 8
+        je      .scrollup
+        call    lcd_gotoxy
+        jmp     .end
+
+.scrollup:
+        call    lcd_scrollup
+        jmp     .end
+
 .backspace:
         jmp     .end
 
@@ -882,6 +904,85 @@ lcd_printchar:
         pop     es
         pop     cx
         pop     bx
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Scroll display up & move cursor to start of last line
+; --------------------------------------------------
+        global  lcd_scrollup
+lcd_scrollup:
+        ; Move row 2 to row 1, row 3 to row 2, etc.
+
+        push    ax
+        push    cx
+        push    di
+        push    es
+
+        mov     ax, BDA_SEG
+        mov     es, ax
+
+        mov     ch, 0
+.nextrow:
+        ; Set LCD addr pointer to row start
+        inc     ch
+        mov     cl, 0
+        call    cmd_set_addr_pointer_xy
+
+        ; Read row into buffer
+        mov     di, BDA_LCD_TMP_BUF
+        call    cmd_autoread_on
+.readchar:
+        call    autoread
+        mov     [es:di], al
+        inc     di
+        inc     cl
+        cmp     cl, 40
+        jne     .readchar
+        call    cmd_auto_reset
+
+        ; Set LCD addr pointer to previous row start
+        mov     cl, 0
+        dec     ch
+        call    cmd_set_addr_pointer_xy
+
+        ; Write row from buffer
+        mov     di, BDA_LCD_TMP_BUF
+        call    cmd_autowrite_on
+.writechar:
+        mov     al, [es:di]
+        call    autowrite
+        inc     di
+        inc     cl
+        cmp     cl, 40
+        jne     .writechar
+        call    cmd_auto_reset
+
+        ; Move to next row
+        inc     ch
+        cmp     ch, 7
+        jne     .nextrow
+
+        ; Clear last row
+        mov     al, 0           ; Space
+        mov     cl, 0
+        call    cmd_set_addr_pointer_xy
+        call    cmd_autowrite_on
+.clearchar:
+        call    autowrite
+        inc     cl
+        cmp     cl, 40
+        jne     .clearchar
+        call    cmd_auto_reset
+
+        ; Move cursor to start of last line
+        mov     cl, 0
+        mov     ch, 7
+        call    lcd_gotoxy
+
+        pop     es
+        pop     di
+        pop     cx
         pop     ax
         ret
 
@@ -959,13 +1060,7 @@ lcd_gotoxy:
         mov     ax, cx
         call    cmd_set_cursor_pos
         ; Set address pointer
-        xor     ax, ax
-        mov     al, ch  ; AL = Y
-        mov     bh, 40
-        mul     bh      ; AX = Y * 8
-        xor     ch, ch
-        add     ax, cx  ; AX = Y * 8 + X
-        call    cmd_set_addr_pointer
+        call    cmd_set_addr_pointer_xy
 
         pop     bx
         pop     ax
@@ -1200,6 +1295,30 @@ cmd_set_addr_pointer:
         call    writedata2
         mov     al, 0x24
         call    writecmd
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Set address pointer (text home address) using row & column
+;
+; This is a convenience wrapper around cmd_set_addr_pointer
+; ------------------------------------------------
+; Args:
+;   CL - column
+;   CH - row
+cmd_set_addr_pointer_xy:
+        push    ax
+        push    bx
+        push    cx
+        xor     ax, ax
+        mov     al, ch  ; AL = Y
+        mov     bh, 40
+        mul     bh      ; AX = Y * 8
+        xor     ch, ch
+        add     ax, cx  ; AX = Y * 8 + X
+        call    cmd_set_addr_pointer
+        pop     cx
+        pop     bx
         pop     ax
         ret
 
