@@ -14,6 +14,8 @@
 
         extern  lcd_printchar
         extern  lcd_printstr
+        extern  lcd_scrollup
+        extern  lcd_gotoxy
 
         section .text
 
@@ -102,14 +104,25 @@ set_cursor_shape:
 ; Function 02h: Set cursor position
 ; --------------------------------------------------
 set_cursor_position:
-        stc
+        push    cx
+        mov     cx, dx
+        call    lcd_gotoxy
+        pop     cx
+        clc
         ret
 
 ; --------------------------------------------------
 ; Function 03h: Get cursor position and shape
 ; --------------------------------------------------
 get_cursor_position_and_shape:
-        stc
+        push    es
+        mov     dx, BDA_SEG
+        mov     es, dx
+        mov     dx, [es:BDA_CURSOR_POS_P1]
+        xor     ax, ax
+        xor     cx, cx
+        pop     es
+        clc
         ret
 
 ; --------------------------------------------------
@@ -130,7 +143,9 @@ set_display_page:
 ; Function 06h: Scroll screen up
 ; --------------------------------------------------
 scroll_screen_up:
-        stc
+        ; TODO: This always scrolls up by one line.
+        call    lcd_scrollup
+        clc
         ret
 
 ; --------------------------------------------------
@@ -151,7 +166,8 @@ read_character_and_attribute_at_cursor:
 ; Function 09h: Write character and attribute at cursor
 ; --------------------------------------------------
 write_character_and_attribute_at_cursor:
-        stc
+        call    lcd_printchar
+        clc
         ret
 
 ; --------------------------------------------------
@@ -200,7 +216,10 @@ write_character_in_tty_mode:
 ; Function 0Fh: Get video mode
 ; --------------------------------------------------
 get_video_mode:
-        stc
+        mov     al, 7   ; 80x25 text mode
+        mov     ah, 40  ; 40 columns
+        mov     bh, 0   ; Page 0
+        clc
         ret
 
 ; --------------------------------------------------
@@ -232,6 +251,7 @@ alternate_select_functions:
         ; mov     bl, 0   ; 64k EGA
         ; mov     ch, 0   ; No features
         ; mov     cl, 0   ; No switches
+        ; Don't touch any registers, just return to inform caller that we don't support any fancy graphics
         stc
         ret
 

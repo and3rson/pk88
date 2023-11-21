@@ -106,8 +106,11 @@ wait_for_keypress:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special function key
 peek_char:
-        call    lcd_printm
-        db      "!PC", 13, 10, 0
-        hlt
+        ; call    lcd_printm
+        ; db      "!PC", 0
+        ; hlt
         ; stc
         ; ret
+        clc
+        xor     ax, ax
+        ret

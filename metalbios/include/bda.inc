@@ -64,6 +64,8 @@ BDA_RESERVED            equ     0xAC  ; 68 bytes
 ; BDA_INT_FUNC_PTR        equ     BDA_RESERVED + 0
 BDA_LCD_TMP_BUF         equ     BDA_RESERVED + 0  ; 40 bytes
 
+BDA_VID_PARM_CTRL_BLK   equ     0xA8  ; 4 bytes
+
 BDA_INTRA_APP_COMM_AREA equ     0xF0  ; 16 bytes
 
 %endif

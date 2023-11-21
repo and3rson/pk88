@@ -737,6 +737,19 @@ lcd_init:
         xor     ax, ax
         mov     [es:BDA_CURSOR_POS_P1], ax
 
+        ; Set display size in BDA
+        mov     ax, 40
+        mov     [es:BDA_COL_PER_ROW], ax
+
+        ; Set video mode
+        mov     al, 7
+        mov     [es:BDA_VIDEO_MODE_ACTIVE], al
+
+        ; Set video param control block
+        xor     ax, ax
+        mov     [es:BDA_VID_PARM_CTRL_BLK], ax
+        mov     [es:BDA_VID_PARM_CTRL_BLK + 2], ax
+
         pop     es
         pop     bx
         pop     ax
