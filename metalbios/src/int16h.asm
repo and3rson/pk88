@@ -32,6 +32,8 @@ STUB_S  db      "!0x16:", 0
 ;   AH - function number
         global  int16h_isr
 int16h_isr:
+        sti
+
         push    si
         push    bx  ; Save BX to perform pointer arithmetic
 
@@ -91,11 +93,12 @@ int16h_nop:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special key
 wait_for_keypress:
-        call    lcd_printm
-        db      "!WFK", 13, 10, 0
-        hlt
-        ; stc
-        ; ret
+        mov     ax, [es:BDA_KB_BITBANG_VALUE]
+        test    ax, ax
+        jz      wait_for_keypress
+
+        clc
+        ret
 
 ; --------------------------------------------------
 ; Function 0x01 - Peek character from keyboard buffer
@@ -106,11 +109,38 @@ wait_for_keypress:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special function key
 peek_char:
-        ; call    lcd_printm
-        ; db      "!PC", 0
-        ; hlt
-        ; stc
-        ; ret
+        push    bp
+        mov     bp, sp
+        ; Stack:
+        ;   BP+0 - original BP
+        ;   BP+2 - return address (inside int16h_isr)
+        ;   BP+4 - SI (pushed at start of int16h_isr)
+        ;   BP+6 - IP
+        ;   BP+8 - CS
+        ;   BP+10 - flags (ZF is bit 6)
+        push    es
+
+        mov     ax, BDA_SEG
+        mov     es, ax
+
+        mov     ax, [es:BDA_KB_BITBANG_VALUE]
+        test    ax, ax
+        jz      .no_key
+
+.has_key:
+        ; Clear zero flag in BP+10
+        and     byte [bp+10], 0xBF
+        ; Clear scan code
+        and     word [es:BDA_KB_BITBANG_VALUE], 0
+        jmp     .done
+
+.no_key:
+        ; Set zero flag in BP+10
+        or      byte [bp+10], 0x40
+
+.done:
+        pop     es
+        pop     bp
+
         clc
-        xor     ax, ax
         ret

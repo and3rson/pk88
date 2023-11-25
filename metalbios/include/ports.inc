@@ -29,10 +29,10 @@ TIM_CMD equ     PIT + 3
 
 ; 8255 PPI
 PPI     equ     0x60
-IO_A    equ     PPI + 0
-IO_B    equ     PPI + 1
-IO_C    equ     PPI + 2
-IO_CTRL equ     PPI + 3
+PPI_A   equ     PPI + 0
+PPI_B   equ     PPI + 1
+PPI_C   equ     PPI + 2
+PPI_CTL equ     PPI + 3
 
 ; 8251 UART
 ; https://media.digikey.com/pdf/Data%20Sheets/Texas%20Instruments%20PDFs/PC16550D.pdf
@@ -51,5 +51,10 @@ UA_SCR  equ     UART + 7  ; Scratch Register
 ; DLAB = 1
 UA_DLL  equ     UART + 0  ; Divisor Latch (LS)
 UA_DLM  equ     UART + 1  ; Divisor Latch (MS)
+
+; Keyboard controller (GAL22V10)
+KB      equ     0x04
+KB_DAT  equ     KB + 0
+KB_RES  equ     KB + 1
 
 %endif

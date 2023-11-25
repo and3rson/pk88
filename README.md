@@ -6,6 +6,8 @@ Single-board computer based on KM1810VM88 CPU (Ukrainian clone of Intel 8088) th
 
 PK stands for Персональний Комп'ютер ("Personalnii Kompyuter", i.e. "Personal Computer") in Ukrainian.
 
+This board runs @ 8 MHz (24 MHz oscillator).
+
 - [KiCad schematics](./kicad)
 - [GAL sources](./gal) - Address & I/O port decoders using 2x ATF16V8
 - [Various circuit simulations](./circuits) - made with [Digital](https://github.com/hneemann/Digital)

@@ -57,6 +57,8 @@ equipment_list_init:
 ; --------------------------------------------------
         global  int11h_isr
 int11h_isr:
+        sti
+
         push    ax
         push    es
 

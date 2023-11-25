@@ -20,6 +20,8 @@ MEMORY  equ     640
 ; --------------------------------------------------
         global  int12h_isr
 int12h_isr:
+        sti
+
         mov     ax, MEMORY
 
         clc

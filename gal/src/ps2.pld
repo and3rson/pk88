@@ -1,0 +1,35 @@
+GAL22V10
+PS2
+
+CLK   DATA  A0   /RD    NC    NC    NC    NC    NC    NC     NC    GND
+/CS   Q7    Q6    Q5    Q4    Q3    Q2    Q1    Q0    START  IRQ   VCC
+
+AR = CS * A0
+SP = GND
+
+/Q7.R = /DATA * /START + Q7 * START
+/Q6.R =    Q7 * /START + Q6 * START
+/Q5.R =    Q6 * /START + Q5 * START
+/Q4.R =    Q5 * /START + Q4 * START
+/Q3.R =    Q4 * /START + Q3 * START
+/Q2.R =    Q3 * /START + Q2 * START
+/Q1.R =    Q2 * /START + Q1 * START
+/Q0.R =    Q1 * /START + Q0 * START
+
+Q0.E = CS * RD
+Q1.E = CS * RD
+Q2.E = CS * RD
+Q3.E = CS * RD
+Q4.E = CS * RD
+Q5.E = CS * RD
+Q6.E = CS * RD
+Q7.E = CS * RD
+
+/START.R = Q0
+
+IRQ.R = START
+
+DESCRIPTION
+Keyboard IC by Gregor
+Converted from WinCUPL to GALasm by Andrew Dunai
+Original thread: http://forum.6502.org/viewtopic.php?f=10&t=7833

@@ -9,7 +9,9 @@
         cpu     8086
         bits    16
 
-        extern  int1Ch_isr
+        %include "ports.inc"
+
+        extern  pit_restart_timer0
 
         section .text
 
@@ -18,5 +20,18 @@
 ; --------------------------------------------------
         global  int08h_isr
 int08h_isr:
-        ; Do nothing, simply trigger user ISR
-        jmp     int1Ch_isr
+        ; Restart timer & trigger user ISR
+        ; push    ax
+        ;
+        ; mov     al, 0b00001010  ; SCK = 1
+        ; out     UA_MCR, al      ; Write SCK
+
+        call    pit_restart_timer0
+        int     0x1C
+
+        ; mov     al, 0b00001011  ; SCK = 0
+        ; out     UA_MCR, al      ; Write SCK
+
+        ; pop     ax
+
+        iret

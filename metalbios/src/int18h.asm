@@ -22,6 +22,8 @@ BASIC_S db      "BASIC STUB", 0
 ; --------------------------------------------------
         global  int18h_isr
 int18h_isr:
+        sti
+
         mov     ax, ROM_SEG
         mov     es, ax
         mov     ah, 0x13

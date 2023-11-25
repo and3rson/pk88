@@ -28,6 +28,8 @@
 ;   AH - function number
         global  int14h_isr
 int14h_isr:
+        sti
+
         push    si
         push    bx  ; Save BX to perform pointer arithmetic
 

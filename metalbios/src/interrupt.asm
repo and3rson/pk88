@@ -4,6 +4,8 @@
 ;
 ; This file is part of MetalBIOS for PK-88.
 ;
+; https://pdf.datasheetcatalog.com/datasheet/oki/MSM82C53-2JS.pdf
+;
 ; =====================================================
 
         cpu     8086
@@ -15,11 +17,14 @@
 
         extern  int03h_isr
         extern  int08h_isr
+        extern  int09h_isr
+        extern  int0Fh_isr
         extern  int10h_isr
         extern  int11h_isr
         extern  int12h_isr
         extern  int13h_isr
         extern  int16h_isr
+        extern  int1Ch_isr
         extern  lcd_printbyte
 
         section .rodata
@@ -86,7 +91,7 @@ interrupt_init:
         ; ^ ^ ^ ^ ^ ^ ^ ^
         ; | | | | | | | |
         ; | | | | +++ | +- 1: 8086/8088 mode
-        ; +++++ |  |  +-- 1: auto end-ot-interrupt
+        ; +++++ |  |  +-- 1: auto end-of-interrupt
         ;   |   |  +---- 0X: non-buffered mode
         ;   |   +------ 0: not special fully nested mode
         ;   +-------- 000
@@ -110,13 +115,13 @@ isr_handlers:
         dw      isr_stub07
         ; IRQ0..IRQ7
         dw      int08h_isr      ; IRQ0 - RTC
-        dw      isr_stub09      ; IRQ1 - Keyboard
+        dw      int09h_isr      ; IRQ1 - Keyboard
         dw      isr_stub0A
         dw      isr_stub0B
         dw      isr_stub0C      ; IRQ4 - Serial port
         dw      isr_stub0D
         dw      isr_stub0E
-        dw      isr_stub0F
+        dw      int0Fh_isr      ; IRQ7 - Keyboard (GAL22V10)
         dw      int10h_isr      ; 0x10 - Video services
         dw      int11h_isr      ; 0x11 - Equipment list
         dw      int12h_isr      ; 0x12 - Conventional memory size
@@ -129,7 +134,7 @@ isr_handlers:
         dw      isr_stub19      ; 0x19 - Soft reboot
         dw      isr_stub1A      ; 0x1A - RTC services
         dw      isr_stub1B      ; 0x1B - CTRL-Break handler
-        dw      isr_stub1C      ; 0x1C - Timer tick handler (called by INT 0x08)
+        dw      int1Ch_isr      ; 0x1C - Timer tick handler (called by INT 0x08)
         dw      isr_stub1D      ; 0x1D - Reserved (pointer to Video Parameter Table)
         dw      isr_stub1E      ; 0x1E - Reserved (pointer to Diskette Parameter Table)
         dw      isr_stub1F      ; 0x1F - Reserved (pointer to Video Graphics Character Table)

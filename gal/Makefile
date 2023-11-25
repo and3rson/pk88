@@ -5,7 +5,8 @@ TESTS = $(SOURCES:.pld=.vec)
 all: $(OBJECTS)
 
 src/%.jed: src/%.pld
-	galasm -c -p -f -v $<
+	@#galasm -c -p -f -v $<
+	galasm -v $<
 
 .PHONY: clean
 clean:
@@ -26,3 +27,10 @@ ifndef PROGRAM
 	$(error PROGRAM is required)
 endif
 	minipro -p ATF16V8B -w ./src/$(PROGRAM).jed -z
+
+.PHONY: program
+program-22v10: src/$(PROGRAM).jed
+ifndef PROGRAM
+	$(error PROGRAM is required)
+endif
+	minipro -p 'ATF22V10C(UES)' -w ./src/$(PROGRAM).jed -z

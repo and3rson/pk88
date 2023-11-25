@@ -33,6 +33,8 @@ STUB_S  db      "!0x13:", 0
 ;   AH - function number
         global  int13h_isr
 int13h_isr:
+        sti
+
         push    si
         push    bx  ; Save BX to perform pointer arithmetic
 

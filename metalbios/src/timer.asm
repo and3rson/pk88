@@ -15,12 +15,14 @@
 
         section .text
 
+COUNT   equ     0x8000  ; 24 ms @ 16.384 MHz
+
 ; -----------------------------------------------------
 ; Initialize 8253 PIT
 ; -----------------------------------------------------
         global  pit_init
 pit_init:
-        push ax
+        push    ax
         ; Control word:
         ; 0 0 1 1 0 0 0 0
         ; ^ ^ ^ ^ ^ ^ ^ ^
@@ -32,10 +34,10 @@ pit_init:
         ;  +------------ 00 - channel 0, 01 - channel 1, 10 - channel 2
 
         ; Timer 0
-        mov     al, 00_11_010_0b  ; LSB then MSB, mode 2, 16-bit binary counter
+        mov     al, 00_11_000_0b  ; LSB then MSB, mode 0, 16-bit binary counter
         out     TIM_CMD, al
-        mov     ax, 0x8000  ; 24 ms @ 16.384 MHz
-        out     TIM0, al
+        mov     ax, COUNT
+        out     TIM0, al        ; High/low bytes must be written separately
         xchg    al, ah
         out     TIM0, al
 
@@ -44,8 +46,31 @@ pit_init:
         out     TIM_CMD, al
 
         ; Timer 2
+        ; TODO: Square wave generator for buzzer
         mov     al, 10_11_000_0b  ; LSB then MSB, mode 0, 16-bit binary counter
         out     TIM_CMD, al
 
         pop     ax
+        ret
+
+; -----------------------------------------------------
+; Restart timer 0
+; -----------------------------------------------------
+; Clobbers:
+;   AX
+        global  pit_restart_timer0
+pit_restart_timer0:
+        push    ax
+
+        ; Write control word
+        mov     al, 00_11_000_0b  ; LSB then MSB, mode 0, 16-bit binary counter
+
+        ; Write count
+        mov     al, (COUNT & 0xFF)
+        out     TIM0, al        ; High/low bytes must be written separately
+        mov     al, ((COUNT >> 8) & 0xFF)
+        out     TIM0, al
+
+        pop     ax
+
         ret

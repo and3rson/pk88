@@ -12,9 +12,11 @@
 
         %include "sys.inc"
         %include "ports.inc"
+        %include "bda.inc"
 
         extern lcd_init
         extern lcd_printstr
+        extern lcd_printbyte
         extern lcd_printword
         extern lcd_printchar
         extern lcd_printm
@@ -24,6 +26,8 @@
         extern uart_init
         extern uart_send
         extern pit_init
+        extern ppi_init
+        extern keyboard_init
         extern sdc_init
         extern sdc_read_single_block
         extern sdc_write_single_block
@@ -51,27 +55,14 @@ init:
         mov     ax, ROM_SEG
         mov     ds, ax
 
-        ; Initialize I/O
-        mov     dx, IO_CTRL
-        mov     al, 0b10000000
-        ; 1 0 0 0 0 0 0 0
-        ; ^ ^ ^ ^ ^ ^ ^ ^
-        ; | | | | | | | |
-        ; | | | | | | | +-- 0: Port C (lower) is output
-        ; | +++ | | | +--- 0: Port B is output
-        ; |  |  | | +---- 0: Mode 0
-        ; |  |  | +----- 0: Port C (upper) is output
-        ; |  |  +------ 0: Port A is output
-        ; |  +------- 00: Mode 0
-        ; +---------- 1: Mode set flag
-        out     dx, al
-
         ; Init base I/O
         call    lcd_init
         call    uart_init
         call    equipment_list_init
         call    interrupt_init
         call    pit_init
+        call    ppi_init
+        call    keyboard_init
 
         ; Welcome message
         mov     ax, ROM_SEG
@@ -139,6 +130,38 @@ init:
         ; Ready!
 
         sti
+
+        mov     ax, BDA_SEG
+        mov     es, ax
+
+.read_kb:
+        ; ; in      al, PPI_A
+        ; ; and     al, 0x01
+        ; ; add     al, '0'
+        ; ; call    lcd_printchar
+        ; ; mov     al, 0x02
+        ; ; out     PPI_B, al
+        ; ; mov     al, 0x00
+        ; ; out     PPI_B, al
+        ; mov     ax, [es:BDA_KB_BITBANG_VALUE]
+        ; test    ax, ax
+        ; jz      .read_kb
+        ; call    lcd_printword
+        ; ; mov     ah, 0x0E
+        ; ; int     0x10
+        ; xor     ax, ax
+        ; mov     [es:BDA_KB_BITBANG_VALUE], ax
+        ; jmp     .read_kb
+        ; mov     ah, 0x01
+        ; int     0x16
+        ; ; mov     al, '0'
+        ; ; mov     ah, 0x0E
+        ; ; int     0x10
+        ; jz      .read_kb
+        ; call    lcd_printword
+        ; jmp     .read_kb
+
+        jmp     .read_kb
 
         ; https://thestarman.pcministry.com/asm/mbr/95BMEMBR.htm
         ; Load bootsector
