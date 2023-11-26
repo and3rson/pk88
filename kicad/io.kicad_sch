@@ -3582,7 +3582,7 @@
   (symbol (lib_id "82xx:16550") (at 73.66 144.78 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 00169ee5-6b1a-4833-9069-b39575a0a85c)
-    (property "Reference" "U16" (at 75.8541 107.95 0)
+    (property "Reference" "UART1" (at 75.8541 107.95 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "16550" (at 75.8541 110.49 0)
@@ -3637,7 +3637,7 @@
     (instances
       (project "main"
         (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a/3a7ee20c-9aab-4bcf-8400-2397304f0b30"
-          (reference "U16") (unit 1)
+          (reference "UART1") (unit 1)
         )
       )
     )
@@ -3703,7 +3703,7 @@
   (symbol (lib_id "my:ATF22V10") (at 334.01 171.45 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 08e86ae8-5a02-4476-b234-13e0188fa44a)
-    (property "Reference" "U20" (at 336.2041 154.94 0)
+    (property "Reference" "KB1" (at 336.2041 154.94 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "ATF22V10" (at 336.2041 157.48 0)
@@ -3742,7 +3742,7 @@
     (instances
       (project "main"
         (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a/3a7ee20c-9aab-4bcf-8400-2397304f0b30"
-          (reference "U20") (unit 1)
+          (reference "KB1") (unit 1)
         )
       )
     )
@@ -3989,7 +3989,7 @@
           (reference "U?") (unit 1)
         )
         (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a/3a7ee20c-9aab-4bcf-8400-2397304f0b30"
-          (reference "U9") (unit 1)
+          (reference "PIT1") (unit 1)
         )
       )
     )
@@ -4140,7 +4140,7 @@
           (reference "U?") (unit 1)
         )
         (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a/3a7ee20c-9aab-4bcf-8400-2397304f0b30"
-          (reference "U12") (unit 1)
+          (reference "PPI1") (unit 1)
         )
       )
     )
@@ -4260,7 +4260,7 @@
   (symbol (lib_id "my:uSD-adapter") (at 269.24 105.41 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 983606dd-3e20-4789-a741-4c1a266952af)
-    (property "Reference" "U13" (at 279.4 104.14 0)
+    (property "Reference" "SD1" (at 279.4 104.14 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "uSD adapter" (at 279.4 106.68 0)
@@ -4281,7 +4281,7 @@
     (instances
       (project "main"
         (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a/3a7ee20c-9aab-4bcf-8400-2397304f0b30"
-          (reference "U13") (unit 1)
+          (reference "SD1") (unit 1)
         )
       )
     )
@@ -4379,10 +4379,10 @@
   (symbol (lib_id "Interface:8259") (at 74.93 58.42 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid c18a198b-816b-43bd-b350-4ef7739ddbf1)
-    (property "Reference" "U14" (at 77.1241 29.845 0)
+    (property "Reference" "PIC1" (at 77.1241 29.21 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "8259" (at 77.1241 32.385 0)
+    (property "Value" "8259" (at 77.1241 31.75 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Package_DIP:DIP-28_W15.24mm_Socket" (at 74.93 58.42 0)
@@ -4422,7 +4422,7 @@
     (instances
       (project "main"
         (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a/3a7ee20c-9aab-4bcf-8400-2397304f0b30"
-          (reference "U14") (unit 1)
+          (reference "PIC1") (unit 1)
         )
       )
     )
@@ -4431,11 +4431,11 @@
   (symbol (lib_id "lcd:24064-LCD") (at 177.8 185.42 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid c3248852-61cd-46b4-9ba9-6309a1187d4f)
-    (property "Reference" "U17" (at 182.5341 210.82 0)
-      (effects (font (size 1.27 1.27)) (justify left))
+    (property "Reference" "LCD1" (at 193.04 159.4419 0)
+      (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "T6963C" (at 182.5341 213.36 0)
-      (effects (font (size 1.27 1.27)) (justify left))
+    (property "Value" "T6963C" (at 193.04 161.9819 0)
+      (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "footprints:LCD24064" (at 177.8 160.02 0)
       (effects (font (size 1.27 1.27)) hide)
@@ -4465,7 +4465,7 @@
     (instances
       (project "main"
         (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a/3a7ee20c-9aab-4bcf-8400-2397304f0b30"
-          (reference "U17") (unit 1)
+          (reference "LCD1") (unit 1)
         )
       )
     )
