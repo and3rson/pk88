@@ -1,5 +1,5 @@
 GAL16V8
-IO.deco
+IO.Deco
 
 A8    A7    A6    A5    A4    A3    A2    A1    A0    GND
 A9   /M     NC   /PS2  /LCD  /PIC  /UART /PIT  /PPI   VCC

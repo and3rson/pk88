@@ -1,8 +1,8 @@
 GAL16V8
 Mem.Deco
 
-CLK    A16    A17    A18    A19   /M      MCB    NC     NC     GND
-/OE    NC     Q2    /HIRAM /LORAM /ROM    Q0     Q1     TMCK   VCC
+CLK    A16     A17    A18    A19   /M      MCB    T2OUT  SPKREN GND
+/OE    SPKROUT Q2    /HIRAM /LORAM /ROM    Q0     Q1     TMCK   VCC
 
 ;; Memory
 ; Low RAM:  $00000..$7FFFF
@@ -33,6 +33,9 @@ TMCK.R =  TMCK *  Q2
        +  TMCK *  Q1
        +  TMCK *  Q0
        + /TMCK * /Q2 * /Q1 * /Q0
+
+; Speaker signal
+SPKROUT = T2OUT * SPKREN
 
 DESCRIPTION
 Memory address decoder for PK-88
