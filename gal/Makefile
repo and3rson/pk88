@@ -1,12 +1,18 @@
-SOURCES = $(wildcard src/*.pld)
-OBJECTS = $(SOURCES:.pld=.jed)
+GALASM_SOURCES = $(wildcard src/*.gpld)
+CUPL_SOURCES = $(wildcard src/*.pld)
+GALASM_OBJECTS = $(SOURCES:.gpld=.jed)
+CUPL_OBJECTS = $(SOURCES:.pld=.jed)
 TESTS = $(SOURCES:.pld=.vec)
 
-all: $(OBJECTS)
+all: $(GALASM_OBJECTS) $(CUPL_OBJECTS)
 
-src/%.jed: src/%.pld
+src/%.jed: src/%.gpld
 	@#galasm -c -p -f -v $<
 	galasm -v $<
+
+src/%.jed: src/%.pld
+	../bin/cupl.exe -j -xu cupl.dl $<
+	mv $@ $(@:.JED=.jed)
 
 .PHONY: clean
 clean:

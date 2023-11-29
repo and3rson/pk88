@@ -1,0 +1,11 @@
+Name     SPI ;
+PartNo   00 ;
+Date     29.11.2023 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Dunai ;
+Assembly None ;
+Location  ;
+Device   v750;
+
+pin 1 = CLK;
