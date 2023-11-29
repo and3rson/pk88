@@ -93,9 +93,20 @@ int16h_nop:
 ;   AH - scan code
 ;   AL - ASCII character or zero if special key
 wait_for_keypress:
-        mov     ax, [es:BDA_KB_BITBANG_VALUE]
+        push    es
+
+        mov     ax, BDA_SEG
+        mov     es, ax
+
+.wait:
+        mov     ax, [es:BDA_KB_VALUE]
         test    ax, ax
-        jz      wait_for_keypress
+        jz      .wait
+
+        ; Clear scan code
+        and     word [es:BDA_KB_VALUE], 0
+
+        pop     es
 
         clc
         ret
@@ -123,15 +134,13 @@ peek_char:
         mov     ax, BDA_SEG
         mov     es, ax
 
-        mov     ax, [es:BDA_KB_BITBANG_VALUE]
+        mov     ax, [es:BDA_KB_VALUE]
         test    ax, ax
         jz      .no_key
 
 .has_key:
         ; Clear zero flag in BP+10
         and     byte [bp+10], 0xBF
-        ; Clear scan code
-        and     word [es:BDA_KB_BITBANG_VALUE], 0
         jmp     .done
 
 .no_key:

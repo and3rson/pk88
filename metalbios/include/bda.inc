@@ -63,9 +63,8 @@ BDA_COLOR_PAL           equ     0x66
 BDA_RESERVED            equ     0xAC  ; 68 bytes
 ; BDA_INT_FUNC_PTR        equ     BDA_RESERVED + 0
 BDA_LCD_TMP_BUF         equ     BDA_RESERVED + 0  ; 40 bytes
-BDA_KB_BITBANG_BUFFER   equ     BDA_RESERVED + 40 ; 2 bytes
-BDA_KB_BITBANG_VALUE    equ     BDA_RESERVED + 42 ; 2 bytes
-BDA_KB_BITBANG_FLAGS    equ     BDA_RESERVED + 44 ; 1 byte
+BDA_KB_VALUE            equ     BDA_RESERVED + 40 ; 2 bytes
+BDA_KB_FLAGS            equ     BDA_RESERVED + 42 ; 1 byte
 
 BDA_VID_PARM_CTRL_BLK   equ     0xA8  ; 4 bytes
 

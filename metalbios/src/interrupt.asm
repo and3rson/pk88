@@ -16,8 +16,8 @@
         %include "macros.inc"
 
         extern  int03h_isr
-        extern  int08h_isr
-        extern  int09h_isr
+        extern  irq0h_isr
+        extern  irq1h_isr
         extern  int0Fh_isr
         extern  int10h_isr
         extern  int11h_isr
@@ -105,6 +105,7 @@ interrupt_init:
         ret
 
 isr_handlers:
+        ; Interrupts 0x00..0x07
         dw      isr_stub00      ; 0x00 - Divide error
         dw      isr_stub01      ; 0x01 - Single step
         dw      isr_stub02      ; 0x02 - NMI
@@ -113,15 +114,16 @@ isr_handlers:
         dw      isr_stub05      ; 0x05 - Shift-PrtScr
         dw      isr_stub06
         dw      isr_stub07
-        ; IRQ0..IRQ7
-        dw      int08h_isr      ; IRQ0 - RTC
-        dw      int09h_isr      ; IRQ1 - Keyboard
+        ; IRQ0..IRQ7 (interrupts 0x08..0x0F)
+        dw      irq0h_isr       ; IRQ0 - RTC
+        dw      irq1h_isr       ; IRQ1 - Keyboard
         dw      isr_stub0A
         dw      isr_stub0B
         dw      isr_stub0C      ; IRQ4 - Serial port
         dw      isr_stub0D
         dw      isr_stub0E
-        dw      int0Fh_isr      ; IRQ7 - Keyboard (GAL22V10)
+        dw      isr_stub0F
+        ; Interrupts 0x10..0x1F
         dw      int10h_isr      ; 0x10 - Video services
         dw      int11h_isr      ; 0x11 - Equipment list
         dw      int12h_isr      ; 0x12 - Conventional memory size
@@ -208,7 +210,7 @@ isr_stub0E:
 
 isr_stub0F:
         push    cx
-        mov     cl, 0x0F
+        mov     cl, 0x0E
         jmp     isr_stub
 
 isr_stub14:

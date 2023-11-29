@@ -56,8 +56,6 @@ pit_init:
 ; -----------------------------------------------------
 ; Restart timer 0
 ; -----------------------------------------------------
-; Clobbers:
-;   AX
         global  pit_restart_timer0
 pit_restart_timer0:
         push    ax

@@ -16,10 +16,10 @@
         section .text
 
 ; --------------------------------------------------
-; BIOS 0x08 ISR
+; IRQ 0h ISR
 ; --------------------------------------------------
-        global  int08h_isr
-int08h_isr:
+        global  irq0h_isr
+irq0h_isr:
         ; Restart timer & trigger user ISR
         ; push    ax
         ;

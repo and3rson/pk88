@@ -152,13 +152,16 @@ init:
         ; xor     ax, ax
         ; mov     [es:BDA_KB_BITBANG_VALUE], ax
         ; jmp     .read_kb
-        ; mov     ah, 0x01
-        ; int     0x16
+        mov     ah, 0x01
+        int     0x16
         ; ; mov     al, '0'
         ; ; mov     ah, 0x0E
         ; ; int     0x10
-        ; jz      .read_kb
+        jz      .read_kb
+        xor     ah, ah
+        int     0x16
         ; call    lcd_printword
+        call    lcd_printchar
         ; jmp     .read_kb
 
         jmp     .read_kb

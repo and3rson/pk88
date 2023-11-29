@@ -68,9 +68,8 @@ ppi_init:
         ; Init keyboard buffers
         mov     ax, BDA_SEG
         mov     es, ax
-        mov     word [es:BDA_KB_BITBANG_BUFFER], 0xFFFF
-        mov     word [es:BDA_KB_BITBANG_VALUE], 0
-        mov     byte [es:BDA_KB_BITBANG_FLAGS], 0
+        mov     word [es:BDA_KB_VALUE], 0
+        mov     byte [es:BDA_KB_FLAGS], 0
 
         pop     es
         pop     ax
