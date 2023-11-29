@@ -1,8 +1,8 @@
 GALASM_SOURCES = $(wildcard src/*.gpld)
 CUPL_SOURCES = $(wildcard src/*.pld)
-GALASM_OBJECTS = $(SOURCES:.gpld=.jed)
-CUPL_OBJECTS = $(SOURCES:.pld=.jed)
-TESTS = $(SOURCES:.pld=.vec)
+GALASM_OBJECTS = $(GALASM_SOURCES:.gpld=.jed)
+CUPL_OBJECTS = $(CUPL_SOURCES:.pld=.jed)
+GALASM_TESTS = $(CUPL_SOURCES:.pld=.vec)
 
 all: $(GALASM_OBJECTS) $(CUPL_OBJECTS)
 
@@ -11,17 +11,19 @@ src/%.jed: src/%.gpld
 	galasm -v $<
 
 src/%.jed: src/%.pld
-	../bin/cupl.exe -j -xu cupl.dl $<
-	mv $@ $(@:.JED=.jed)
+	bin/cupl/cupl.exe -j -xu bin/cupl/cupl.dl $<
+	@# Rename file from uppercase to lowercase,
+	@# e. g. src/FOO.pld to src/foo.pld
+	@# This is needed only when the file is created for the first time.
+	NAME=$(shell echo $@ | sed -re 's/\/([^\.]+)/\/\U\1/g') sh -c 'mv $$NAME $@' || true
 
 .PHONY: clean
 clean:
-	rm -f bin/*
 	rm -f src/*.jed src/*.fus src/*.chp src/*.pin src/*.hex src/*.lgc
 
 .PHONY: test
 test: $(SRC)
-	@set -e; for test in $(TESTS); do \
+	@set -e; for test in $(GALASM_TESTS); do \
 		echo "*** $$test"; \
 		python3 ~/src/ginger/ginger/__main__.py $${test%.*}.pld $$test; \
 		echo; \
