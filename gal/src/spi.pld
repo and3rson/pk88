@@ -9,3 +9,29 @@ Location  ;
 Device   v750;
 
 pin 1 = CLK;
+pin 2 = MISO;
+pin 3 = SCK;
+pin 4 = !RD;
+pin 5 = !WR;
+pin 6 = !CS;
+pin 7 = A0;
+
+pin 13 = OE;
+pin 14 = D0;
+pin 15 = D1;
+pin 16 = D2;
+pin 17 = D3;
+pin 18 = D4;
+pin 19 = D5;
+pin 20 = D6;
+pin 21 = D7;
+pin 22 = MOSI;
+
+node T0;
+node T1;
+node T2;
+
+[D0..D7].SP = WR;
+
+T0.D = 'b'1;
+T0.CK = D0;
