@@ -1,37 +1,121 @@
-Name     SPI ;
-PartNo   00 ;
-Date     29.11.2023 ;
-Revision 01 ;
-Designer Engineer ;
-Company  Dunai ;
-Assembly None ;
-Location  ;
+Name     SPI;
+PartNo   00;
+Date     29.11.2023;
+Revision 01;
+Designer Engineer;
+Company  Andrew;
+Assembly None;
+Location ;
 Device   v750;
 
-pin 1 = CLK;
-pin 2 = MISO;
-pin 3 = SCK;
-pin 4 = !RD;
-pin 5 = !WR;
-pin 6 = !CS;
-pin 7 = A0;
+/* Unused pins for nicer group separation in simulator */
+pin 8   = NOP1;
+pin 9   = NOP2;
+pin 10  = NOP3;
 
-pin 13 = OE;
-pin 14 = D0;
-pin 15 = D1;
-pin 16 = D2;
-pin 17 = D3;
-pin 18 = D4;
-pin 19 = D5;
-pin 20 = D6;
-pin 21 = D7;
-pin 22 = MOSI;
+/* Inputs */
+pin 1   = CLK;
+pin 2   = !RD;
+pin 3   = !WR;
+pin 4   = !CS;
+pin 5   = !RES;
+pin 6   = MISO;
+pin 7   = A0;
+pin 13  = !EN;
 
+/* Bidirectional */
+pin 15  = D0;
+pin 16  = D1;
+pin 17  = D2;
+pin 18  = D3;
+pin 19  = D4;
+pin 20  = D5;
+pin 21  = D6;
+pin 22  = D7;
+
+/* Outputs */
+pin 14  = MOSI;
+pin 23  = SCK;
+
+/* Buffer for MISO input */
+node MISO_BUF;
+
+/* 4-bit modulo-9 counter, active when TEN is high */
 node T0;
 node T1;
 node T2;
+node T3;
+node TEN;
 
-[D0..D7].SP = WR;
+/* SPI mode */
+node CPOL;
 
-T0.D = 'b'1;
-T0.CK = D0;
+/* Intermediate expressions */
+WREN = EN & WR;
+/* !WREN = EN # WR; */
+
+T0.CK  = CLK;
+T0.D   = TEN & !T0 & !T3 & !WREN;
+T1.CK  = CLK;
+T1.D   = TEN & (!T1 & T0 # T1 & !T0);
+T2.CK  = CLK;
+T2.D   = TEN & (T2 & !T1 # T2 & !T0 # !T2 & T1 & T0);
+T3.CK  = CLK;
+T3.D   = TEN & (T3 # T2 & T1 & T0);
+/* Timer is activated when /CS & /WR are active, and deactivated when 8 is reached. */
+TEN.CK = !CLK;
+TEN.D = WREN & !A0 # (TEN & !T3);
+[T0..T3].SP = 'b'0;
+[T0..T3].AR = RES;
+TEN.SP = 'b'0;
+TEN.AR = RES;
+
+/* Data is sampled/shifted on falling edge of CLK and is tri-stated when /EN is high or /RD is high. */
+[D0..D7].OE = EN & RD;
+[D0..D7].CK = !CLK;
+[D0..D7].SP = 'b'0;
+/* If /EN & /WR are active, data is loaded. Otherwise: if TEN is active, data is shifted, if not - data is held. */
+/* Due to limitations in number of available terms, data is clobbered when writing CPOL to A0=1. */
+/*
+TEN WREN OP
+0   0    HOLD
+1   0    SHIFT
+X   1    LOAD
+X   1    LOAD
+*/
+/*     SHIFT                        LOAD               HOLD */
+D7.D = TEN & !WREN & D6         #   WREN & D7.IO   #   !TEN & !WREN & D7; /* D7 drives MOSI */
+D6.D = TEN & !WREN & D5         #   WREN & D6.IO   #   !TEN & !WREN & D6;
+D5.D = TEN & !WREN & D4         #   WREN & D5.IO   #   !TEN & !WREN & D5;
+D4.D = TEN & !WREN & D3         #   WREN & D4.IO   #   !TEN & !WREN & D4;
+D3.D = TEN & !WREN & D2         #   WREN & D3.IO   #   !TEN & !WREN & D3;
+D2.D = TEN & !WREN & D1         #   WREN & D2.IO   #   !TEN & !WREN & D2;
+D1.D = TEN & !WREN & D0         #   WREN & D1.IO   #   !TEN & !WREN & D1;
+D0.D = TEN & !WREN & MISO_BUF   #   WREN & D0.IO   #   !TEN & !WREN & D0; /* D0 is shifted in from MOSI */
+
+/* Control register, set by writing with A0=1, held otherwise */
+/*
+Not enough juice for this in ATF750 :(
+
+CPHA.CK = !CLK;
+CPHA.D  = WREN & A0 & D0.IO # !(WREN & A0) & CPHA;
+CPHA.SP = 'b'0;
+CPHA.AR = RES;
+*/
+
+CPOL.CK = !CLK;
+CPOL.D  = WREN & A0 & D1.IO # !(WREN & A0) & CPOL;
+CPOL.SP = 'b'0;
+CPOL.AR = RES;
+
+/* MOSI is set from D7 and is always active */
+MOSI = D7;
+MOSI.OE = 'b'1;
+
+/* MISO is sampled on rising edge of CLK. */
+MISO_BUF.CK = CLK;
+MISO_BUF.SP = 'b'0;
+MISO_BUF.D  = MISO;
+
+/* SCK is set from CLK, but only when timer is active. CPOL=1 inverts the clock. */
+SCK = (CLK & TEN & !WREN) $ CPOL;

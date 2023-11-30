@@ -15,7 +15,7 @@ src/%.jed: src/%.pld
 	@# Rename file from uppercase to lowercase,
 	@# e. g. src/FOO.pld to src/foo.pld
 	@# This is needed only when the file is created for the first time.
-	NAME=$(shell echo $@ | sed -re 's/\/([^\.]+)/\/\U\1/g') sh -c 'mv $$NAME $@' || true
+	@NAME=$(shell echo $@ | sed -re 's/\/([^\.]+)/\/\U\1/g') sh -c 'mv $$NAME $@' 2>/dev/null || true
 
 .PHONY: clean
 clean:
