@@ -17,11 +17,10 @@ pin 10  = NOP3;
 pin 1   = CLK;
 pin 2   = !RD;
 pin 3   = !WR;
-pin 4   = !CS;
+pin 4   = !EN;
 pin 5   = !RES;
 pin 6   = MISO;
 pin 7   = A0;
-pin 13  = !EN;
 
 /* Bidirectional */
 pin 15  = D0;
@@ -62,7 +61,7 @@ T2.CK  = CLK;
 T2.D   = TEN & (T2 & !T1 # T2 & !T0 # !T2 & T1 & T0);
 T3.CK  = CLK;
 T3.D   = TEN & (T3 # T2 & T1 & T0);
-/* Timer is activated when /CS & /WR are active, and deactivated when 8 is reached. */
+/* Timer is activated when /EN & /WR are active, and deactivated when 8 is reached. */
 TEN.CK = !CLK;
 TEN.D = WREN & !A0 # (TEN & !T3);
 [T0..T3].SP = 'b'0;
