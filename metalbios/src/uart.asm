@@ -76,7 +76,7 @@ uart_init:
 ;   AL - byte
         global  uart_send
 uart_send:
-        push ax
+        push    ax
 
         xchg    al, ah
 .wait:
@@ -87,6 +87,55 @@ uart_send:
         out     UA_THR, al
 
         pop     ax
+        ret
+
+; --------------------------------------------------
+; Write word in hex format
+; --------------------------------------------------
+; Args:
+;   AX - word
+        global  uart_sendword
+uart_sendword:
+        xchg    al, ah
+        call    uart_sendhex
+        xchg    al, ah
+        call    uart_sendhex
+
+        ret
+
+; --------------------------------------------------
+; Write byte in hex format
+; --------------------------------------------------
+; Args:
+;   AL - byte
+        global  uart_sendhex
+uart_sendhex:
+        push    bx
+        mov     bx, ax
+
+        shr     al, 1
+        shr     al, 1
+        shr     al, 1
+        shr     al, 1
+        call    uart_sendnibble
+        mov     al, bl
+        call    uart_sendnibble
+
+        mov     ax, bx
+        pop     bx
+        ret
+
+uart_sendnibble:
+        and     al, 0x0F
+        cmp     al, 0x0A
+        jb      .digit
+        add     al, 'A' - 0x0A  ; 55
+        jmp     .done
+.digit:
+        add     al, '0'
+.done:
+        call    uart_send
+
         ret
 
 ; --------------------------------------------------

@@ -16,6 +16,8 @@
         extern  lcd_printstr
         extern  lcd_scrollup
         extern  lcd_gotoxy
+        extern  uart_send
+        extern  uart_sendword
 
         section .text
 
@@ -27,6 +29,35 @@
         global  int10h_isr
 int10h_isr:
         sti
+
+        ; push    ax
+        ; mov     al, 'A'
+        ; call    uart_send
+        ; mov     al, 'X'
+        ; call    uart_send
+        ; mov     al, '='
+        ; call    uart_send
+        ; pop     ax
+        ;
+        ; call    uart_sendword
+        ;
+        ; push    ax
+        ; mov     al, ' '
+        ; call    uart_send
+        ; mov     al, 'D'
+        ; call    uart_send
+        ; mov     al, 'X'
+        ; call    uart_send
+        ; mov     al, '='
+        ; call    uart_send
+        ; mov     ax, dx
+        ; call    uart_sendword
+        ;
+        ; mov     al, 0xD
+        ; call    uart_send
+        ; mov     al, 0xA
+        ; call    uart_send
+        ; pop     ax
 
         push    si
         push    bx  ; Save BX to perform pointer arithmetic
@@ -168,16 +199,18 @@ read_character_and_attribute_at_cursor:
 ; Function 09h: Write character and attribute at cursor
 ; --------------------------------------------------
 write_character_and_attribute_at_cursor:
+        push    cx
+.again:
         call    lcd_printchar
+        loop    .again
+        pop     cx
         clc
         ret
 
 ; --------------------------------------------------
 ; Function 0Ah: Write character only at cursor
 ; --------------------------------------------------
-write_character_only_at_cursor:
-        stc
-        ret
+write_character_only_at_cursor equ write_character_and_attribute_at_cursor
 
 ; --------------------------------------------------
 ; Function 0Bh: Set border color

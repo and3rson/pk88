@@ -134,37 +134,51 @@ init:
         mov     ax, BDA_SEG
         mov     es, ax
 
-.read_kb:
-        ; ; in      al, PPI_A
-        ; ; and     al, 0x01
-        ; ; add     al, '0'
-        ; ; call    lcd_printchar
-        ; ; mov     al, 0x02
-        ; ; out     PPI_B, al
-        ; ; mov     al, 0x00
-        ; ; out     PPI_B, al
-        ; mov     ax, [es:BDA_KB_BITBANG_VALUE]
-        ; test    ax, ax
-        ; jz      .read_kb
-        ; call    lcd_printword
-        ; ; mov     ah, 0x0E
-        ; ; int     0x10
-        ; xor     ax, ax
-        ; mov     [es:BDA_KB_BITBANG_VALUE], ax
-        ; jmp     .read_kb
-        mov     ah, 0x01
-        int     0x16
-        ; ; mov     al, '0'
-        ; ; mov     ah, 0x0E
-        ; ; int     0x10
-        jz      .read_kb
-        xor     ah, ah
-        int     0x16
-        ; call    lcd_printword
-        call    lcd_printchar
-        ; jmp     .read_kb
-
-        jmp     .read_kb
+; .read_kb:
+;         ; ; in      al, PPI_A
+;         ; ; and     al, 0x01
+;         ; ; add     al, '0'
+;         ; ; call    lcd_printchar
+;         ; ; mov     al, 0x02
+;         ; ; out     PPI_B, al
+;         ; ; mov     al, 0x00
+;         ; ; out     PPI_B, al
+;         ; mov     ax, [es:BDA_KB_BITBANG_VALUE]
+;         ; test    ax, ax
+;         ; jz      .read_kb
+;         ; call    lcd_printword
+;         ; ; mov     ah, 0x0E
+;         ; ; int     0x10
+;         ; xor     ax, ax
+;         ; mov     [es:BDA_KB_BITBANG_VALUE], ax
+;         ; jmp     .read_kb
+;         mov     ah, 0x01
+;         int     0x16
+;         ; ; mov     al, '0'
+;         ; ; mov     ah, 0x0E
+;         ; ; int     0x10
+;         jz      .read_kb
+;
+;         xor     ah, ah
+;         int     0x16
+;
+;         cmp     al, 'c'
+;         jne     .not_c
+;         mov     al, 13
+;         jmp     .done
+; .not_c:
+;         cmp     al, 'r'
+;         jne     .not_r
+;         mov     al, 10
+;         jmp     .done
+; .not_r:
+;
+; .done:
+;         ; call    lcd_printword
+;         call    lcd_printchar
+;         ; jmp     .read_kb
+;
+;         jmp     .read_kb
 
         ; https://thestarman.pcministry.com/asm/mbr/95BMEMBR.htm
         ; Load bootsector

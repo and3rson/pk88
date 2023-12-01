@@ -890,20 +890,27 @@ lcd_printchar:
 .lf:
         ; Print LF (Y := Y + 1)
         ; TODO: Scroll display if Y = 7
-        ; Calculate new cursor pos
-        inc     ch
-        cmp     ch, 8
+        cmp     ch, 7
         je      .scrollup
+
+        inc     ch
         call    lcd_gotoxy
         jmp     .end
 
 .crlf:
-        ; Print both CR & LF
+        ; Move cursor to start of next line, scroll display if needed
         xor     cl, cl
-        inc     ch
-        cmp     ch, 8
-        je      .scrollup
         call    lcd_gotoxy
+
+        jmp     .lf
+
+        ; Print CR
+        ; call    lcd_gotoxy
+
+
+        ; jne     .movecursor     ; No scroll needed
+        ; je      .scrollup
+        ; call    lcd_gotoxy
         jmp     .end
 
 .scrollup:
@@ -921,7 +928,7 @@ lcd_printchar:
         ret
 
 ; --------------------------------------------------
-; Scroll display up & move cursor to start of last line
+; Scroll display up, do not change cursor position
 ; --------------------------------------------------
         global  lcd_scrollup
 lcd_scrollup:
@@ -989,9 +996,8 @@ lcd_scrollup:
         jne     .clearchar
         call    cmd_auto_reset
 
-        ; Move cursor to start of last line
-        mov     cl, 0
-        mov     ch, 7
+        ; Restore cursor & addr pointer
+        mov     cx, [es:BDA_CURSOR_POS_P1]
         call    lcd_gotoxy
 
         pop     es
@@ -1066,7 +1072,10 @@ lcd_printnibble:
         global  lcd_gotoxy
 lcd_gotoxy:
         push    ax
-        push    bx
+        push    es
+
+        mov     ax, BDA_SEG
+        mov     es, ax
 
         mov     [es:BDA_CURSOR_POS_P1], cx
 
@@ -1076,7 +1085,7 @@ lcd_gotoxy:
         ; Set address pointer
         call    cmd_set_addr_pointer_xy
 
-        pop     bx
+        pop     es
         pop     ax
         ret
 
