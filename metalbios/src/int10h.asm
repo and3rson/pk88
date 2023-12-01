@@ -45,6 +45,16 @@ int10h_isr:
         ; push    ax
         ; mov     al, ' '
         ; call    uart_send
+        ; mov     al, 'C'
+        ; call    uart_send
+        ; mov     al, 'X'
+        ; call    uart_send
+        ; mov     al, '='
+        ; call    uart_send
+        ; mov     ax, cx
+        ; call    uart_sendword
+        ; mov     al, ' '
+        ; call    uart_send
         ; mov     al, 'D'
         ; call    uart_send
         ; mov     al, 'X'

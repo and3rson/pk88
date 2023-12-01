@@ -66,10 +66,12 @@ ppi_init:
         in      al, PPI_A
 
         ; Init keyboard buffers
+        ; TODO: Move this out
         mov     ax, BDA_SEG
         mov     es, ax
         mov     word [es:BDA_KB_VALUE], 0
         mov     byte [es:BDA_KB_FLAGS], 0
+        mov     byte [es:BDA_KB_MODS], 0
 
         pop     es
         pop     ax

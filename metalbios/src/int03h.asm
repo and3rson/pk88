@@ -94,4 +94,4 @@ int03h_isr:
 
         pop     ax
 
-        hlt
+        iret

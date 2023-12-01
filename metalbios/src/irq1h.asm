@@ -20,11 +20,16 @@
 FLAG_BREAK      equ     0x01
 FLAG_EXT        equ     0x02
 
+MOD_SHIFT       equ     0x01
+
+LSHIFT          equ     0x12
+RSHIFT          equ     0x59
+
 KEYMAP:
         ; This basically maps scan codes that come from PS/2 keyboard (set 2) into BIOS scan codes (set 1).
 
         ;               F9              F5      F3      F1      F2      F12                     F10     F8      F6      F4      TAB     `
-        dw      0x0000, 0x4300, 0x0000, 0x3F00, 0x3D00, 0x3B00, 0x3C00, 0x8600,         0x0000, 0x4400, 0x4200, 0x4000, 0x3E00, 0x0F09, 0x0000, 0x0000
+        dw      0x0000, 0x4300, 0x0000, 0x3F00, 0x3D00, 0x3B00, 0x3C00, 0x8600,         0x0000, 0x4400, 0x4200, 0x4000, 0x3E00, 0x0F09, 0x2960, 0x0000
 
         ;               LALT    LSHIFT          LCTRL   Q       1                                       Z       S       A       W       2
         dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1071, 0x0231, 0x0000,         0x0000, 0x0000, 0x2C7A, 0x1F73, 0x1E61, 0x1177, 0x0332, 0x0000
@@ -49,6 +54,36 @@ KEYMAP:
 
         ;                               F7
         dw      0x0000, 0x0000, 0x0000, 0x4100, 0x0000, 0x0000, 0x0000, 0x0000,         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+
+KEYMAP_SHIFTED:
+        ; This basically maps scan codes that come from PS/2 keyboard (set 2) into BIOS scan codes (set 1).
+
+        ;               F9              F5      F3      F1      F2      F12                     F10     F8      F6      F4      TAB     `
+        dw      0x0000, 0x5C00, 0x0000, 0x5800, 0x5600, 0x5400, 0x5500, 0x8800,         0x0000, 0x5D00, 0x5B00, 0x5900, 0x5700, 0x0F00, 0x297E, 0x0000
+
+        ;               LALT    LSHIFT          LCTRL   Q       1                                       Z       S       A       W       2
+        dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1051, 0x0221, 0x0000,         0x0000, 0x0000, 0x2C5A, 0x1F53, 0x1E41, 0x1157, 0x0340, 0x0000
+
+        ;               C       X       D       E       4       3                               SPACE   V       F       T       R       5
+        dw      0x0000, 0x2E42, 0x2D58, 0x2044, 0x1245, 0x0524, 0x0423, 0x0000,         0x0000, 0x3920, 0x2F56, 0x2146, 0x1454, 0x1352, 0x0625, 0x0000
+
+        ;               N       B       H       G       Y       6                                       M       J       U       7       8
+        dw      0x0000, 0x314E, 0x3042, 0x2348, 0x2247, 0x1559, 0x075E, 0x0000,         0x0000, 0x0000, 0x324D, 0x244A, 0x1655, 0x0826, 0x092A, 0x0000
+
+        ;               ,       K       I       O       0       9                               .       /       L       ;       P       -
+        dw      0x0000, 0x333C, 0x254B, 0x1749, 0x184F, 0x0B29, 0x0A28, 0x0000,         0x0000, 0x343E, 0x353F, 0x264C, 0x273A, 0x1950, 0x0C5F, 0x0000
+
+        ;                       '               [       =                               CAPS    RSHIFT  ENTER   ]               "\"
+        dw      0x0000, 0x0000, 0x2822, 0x0000, 0x1A7B, 0x0D2B, 0x0000, 0x0000,         0x0000, 0x0000, 0x1C0D, 0x1B7D, 0x0000, 0x2B7C, 0x0000, 0x0000
+
+        ;                                                       BKSPC                           KP1             KP4     KP7
+        dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0E08, 0x0000,         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+
+        ;       KP0     KP.     KP2     KP5     KP6     KP8     ESC     NUM             F11     KP+     KP3     KP-     KP*     KP9     SCRL
+        dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x011B, 0x0000,         0x0000, 0x4E2B, 0x0000, 0x4A2D, 0x372A, 0x0000, 0x0000, 0x0000
+
+        ;                               F7
+        dw      0x0000, 0x0000, 0x0000, 0x5A00, 0x0000, 0x0000, 0x0000, 0x0000,         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 
         section .text
 
@@ -81,23 +116,38 @@ irq1h_isr:
 
         ; Load & clear flags
         mov     ah, [BDA_KB_FLAGS]
-        mov     bl, 0
-        mov     [BDA_KB_FLAGS], bl
+        mov     byte [BDA_KB_FLAGS], 0
+
+        ; Is extended flag set?
+        test    ah, FLAG_EXT
+        ; TODO
+        jnz     .done
+
+        ; Is this a shift key?
+        cmp     al, LSHIFT
+        je      .shift
+        cmp     al, RSHIFT
+        je      .shift
 
         ; Is break flag set?
         test    ah, FLAG_BREAK
-        jnz     .done           ; Ignore scan code
-
-        test    ah, FLAG_EXT    ; Is extended flag set?
-        ; TODO
-        jnz     .done           ; Ignore scan code
+        jnz     .done
 
         ; Convert scan code to 16-bit key code
         xor     bx, bx
         mov     bl, al
         shl     bx, 1
 
+        ; Is shift key pressed?
+        test    byte [BDA_KB_MODS], MOD_SHIFT
+        jnz     .shifted
+.normal:
         mov     ax, [es:KEYMAP + bx]
+        jmp     .store
+.shifted:
+        mov     ax, [es:KEYMAP_SHIFTED + bx]
+.store:
+        ; Store key code in BDA
         mov     [BDA_KB_VALUE], ax
 
         jmp     .done
@@ -110,6 +160,18 @@ irq1h_isr:
 .ext:
         ; Received extended code marker
         or      byte [BDA_KB_FLAGS], FLAG_EXT
+        jmp     .done
+
+.shift:
+        test    ah, FLAG_BREAK
+        jnz     .shift_released
+.shift_pressed:
+        ; Shift key pressed
+        or      byte [BDA_KB_MODS], MOD_SHIFT
+        jmp     .done
+.shift_released:
+        ; Shift key released
+        and     byte [BDA_KB_MODS], ~MOD_SHIFT
 
 .done:
         pop     es

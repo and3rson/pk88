@@ -65,6 +65,7 @@ BDA_RESERVED            equ     0xAC  ; 68 bytes
 BDA_LCD_TMP_BUF         equ     BDA_RESERVED + 0  ; 40 bytes
 BDA_KB_VALUE            equ     BDA_RESERVED + 40 ; 2 bytes
 BDA_KB_FLAGS            equ     BDA_RESERVED + 42 ; 1 byte
+BDA_KB_MODS             equ     BDA_RESERVED + 43 ; 1 byte
 
 BDA_VID_PARM_CTRL_BLK   equ     0xA8  ; 4 bytes
 
