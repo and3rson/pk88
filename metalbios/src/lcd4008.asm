@@ -844,7 +844,7 @@ lcd_printm:
         ret
 
 ; --------------------------------------------------
-; Print character to LCD
+; Print character to LCD in teletype mode
 ; --------------------------------------------------
 ; Args:
 ;   AL - character
@@ -924,6 +924,27 @@ lcd_printchar:
         pop     es
         pop     cx
         pop     bx
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Print character to LCD without moving cursor
+; --------------------------------------------------
+; Args:
+;   AL - character
+        global  lcd_putchar
+lcd_putchar:
+        push    ax
+
+        cmp     al, 0x80
+        jae     .char
+        sub     al, 0x20
+
+.char:
+        ; Print ASCII char
+
+        call    cmd_write_data_nonvariable_adp
+
         pop     ax
         ret
 

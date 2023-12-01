@@ -13,6 +13,7 @@
         %include "macros.inc"
 
         extern  lcd_printchar
+        extern  lcd_putchar
         extern  lcd_printstr
         extern  lcd_scrollup
         extern  lcd_gotoxy
@@ -201,7 +202,7 @@ read_character_and_attribute_at_cursor:
 write_character_and_attribute_at_cursor:
         push    cx
 .again:
-        call    lcd_printchar
+        call    lcd_putchar
         loop    .again
         pop     cx
         clc
