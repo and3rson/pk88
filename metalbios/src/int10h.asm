@@ -15,7 +15,7 @@
         extern  lcd_printchar
         extern  lcd_putchar
         extern  lcd_printstr
-        extern  lcd_scrollup
+        extern  lcd_scroll_part
         extern  lcd_gotoxy
         extern  uart_send
         extern  uart_sendword
@@ -147,6 +147,10 @@ set_cursor_shape:
 ; --------------------------------------------------
 ; Function 02h: Set cursor position
 ; --------------------------------------------------
+; Args:
+;   BH - page number (ignored)
+;   DH - row
+;   DL - column
 set_cursor_position:
         push    cx
         mov     cx, dx
@@ -158,6 +162,12 @@ set_cursor_position:
 ; --------------------------------------------------
 ; Function 03h: Get cursor position and shape
 ; --------------------------------------------------
+; Return:
+;   AX - 0
+;   CH - start scan line (zeroed)
+;   CL - end scan line (zeroed)
+;   DH - row
+;   DL - column
 get_cursor_position_and_shape:
         push    es
         mov     dx, BDA_SEG
@@ -179,6 +189,8 @@ get_light_pen_position:
 ; --------------------------------------------------
 ; Function 05h: Set display page
 ; --------------------------------------------------
+; Args:
+;   AL - page number
 set_display_page:
         stc
         ret
@@ -186,17 +198,56 @@ set_display_page:
 ; --------------------------------------------------
 ; Function 06h: Scroll screen up
 ; --------------------------------------------------
+; Args:
+;   AL - number of lines to scroll
+;   BH - attribute to fill with (background color & foreground color, ignored)
+;   CH - start Y
+;   CL - start X
+;   DH - end Y
+;   DL - end X
 scroll_screen_up:
-        ; TODO: This always scrolls up by one line.
-        call    lcd_scrollup
+        push    bx
+        push    cx
+
+        mov     bl, 0   ; Scroll up
+
+.scroll_line:
+        call    lcd_scroll_part
+        inc     ch
+        cmp     ch, dh
+        jle     .scroll_line
+
+        pop     cx
+        pop     bx
         clc
         ret
 
 ; --------------------------------------------------
 ; Function 07h: Scroll screen down
 ; --------------------------------------------------
+; Args:
+;   BH - attribute to fill with (background color & foreground color, ignored)
+;   CH - start Y
+;   CL - start X
+;   DH - end Y
+;   DL - end X
 scroll_screen_down:
-        stc
+        push    bx
+        push    cx
+
+        mov     bl, 1   ; Scroll down
+
+        xchg    cx, dx  ; Swap start and end to prevent overwriting
+
+.scroll_line:
+        call    lcd_scroll_part
+        dec     ch
+        cmp     ch, dh
+        jge     .scroll_line
+
+        pop     cx
+        pop     bx
+        clc
         ret
 
 ; --------------------------------------------------
@@ -209,6 +260,11 @@ read_character_and_attribute_at_cursor:
 ; --------------------------------------------------
 ; Function 09h: Write character and attribute at cursor
 ; --------------------------------------------------
+; Args:
+;   AL - character
+;   BH - page number (ignored)
+;   BL - attribute (ignored)
+;   CX - number of times to write character
 write_character_and_attribute_at_cursor:
         push    cx
 .again:
@@ -221,10 +277,15 @@ write_character_and_attribute_at_cursor:
 ; --------------------------------------------------
 ; Function 0Ah: Write character only at cursor
 ; --------------------------------------------------
-write_character_only_at_cursor equ write_character_and_attribute_at_cursor
+; Args:
+;   AL - character
+;   BH - page number (ignored)
+;   CX - number of times to write character
+write_character_only_at_cursor \
+        equ     write_character_and_attribute_at_cursor
 
 ; --------------------------------------------------
-; Function 0Bh: Set border color
+; Function 0Bh: Set background/border color
 ; --------------------------------------------------
 set_border_color:
         stc

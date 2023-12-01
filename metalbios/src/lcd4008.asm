@@ -914,7 +914,7 @@ lcd_printchar:
         jmp     .end
 
 .scrollup:
-        call    lcd_scrollup
+        call    lcd_scrollup_full
         jmp     .end
 
 .backspace:
@@ -951,8 +951,7 @@ lcd_putchar:
 ; --------------------------------------------------
 ; Scroll display up, do not change cursor position
 ; --------------------------------------------------
-        global  lcd_scrollup
-lcd_scrollup:
+lcd_scrollup_full:
         ; Move row 2 to row 1, row 3 to row 2, etc.
         ; TODO: Interrupts might mess autowrite parts up if they attempt to print to LCD
 
@@ -1024,6 +1023,90 @@ lcd_scrollup:
         pop     es
         pop     di
         pop     cx
+        pop     ax
+        ret
+
+; --------------------------------------------------
+; Scroll part of line
+; --------------------------------------------------
+; Args:
+;   AL - number of lines to scroll
+;   BL - scroll direction (0 = up, 1 = down)
+;   CH - start Y
+;   CL - start X
+;   DL - end X
+        global  lcd_scroll_part
+lcd_scroll_part:
+        push    ax
+        push    di
+        push    es
+
+        mov     ax, BDA_SEG
+        mov     es, ax
+
+        ; Read line part into buffer
+        call    cmd_set_addr_pointer_xy
+        mov     di, BDA_LCD_TMP_BUF
+        call    cmd_autoread_on
+        push    cx
+.readchar:
+        call    autoread
+        mov     [es:di], al
+        inc     di
+        inc     cl
+        cmp     cl, dl
+        jne     .readchar
+        call    cmd_auto_reset
+        pop     cx
+
+        ; Clear line part
+        call    cmd_set_addr_pointer_xy
+        mov     al, 0           ; Space
+        call    cmd_autowrite_on
+        push    cx
+.clearchar:
+        call    autowrite
+        inc     cl
+        cmp     cl, dl
+        jne     .clearchar
+        call    cmd_auto_reset
+        pop     cx
+
+        ; Calculate destination Y
+        test    bl, bl
+        jnz     .down
+.up:
+        add     ch, al
+        cmp     ch, 7
+        jbe     .writedest
+        jmp     .end
+.down:
+        sub     ch, al
+        jc      .end
+
+.writedest:
+        ; Write line part from buffer
+        call    cmd_set_addr_pointer_xy
+        mov     di, BDA_LCD_TMP_BUF
+        call    cmd_autowrite_on
+        push    cx
+.writechar:
+        mov     al, [es:di]
+        call    autowrite
+        inc     di
+        inc     cl
+        cmp     cl, dl
+        jne     .writechar
+        call    cmd_auto_reset
+        pop     cx
+
+.end:
+        ; Restore cursor & addr pointer
+        mov     cx, [es:BDA_CURSOR_POS_P1]
+        call    lcd_gotoxy
+
+        pop     es
+        pop     di
         pop     ax
         ret
 
