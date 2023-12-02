@@ -1,8 +1,8 @@
 GAL22V10
 PS2
 
-CLK   DATA  A0   /RD    NC    NC    NC    NC    NC    NC     NC    GND
-/CS   Q7    Q6    Q5    Q4    Q3    Q2    Q1    Q0    START  IRQ   VCC
+CLK   DATA  A0   /RD    NC    NC    NC    NC    NC    NC    NC    GND
+/CS   START Q0    Q1    Q2    Q3    Q4    Q5    Q6    Q7    IRQ   VCC
 
 AR = CS * A0
 SP = GND

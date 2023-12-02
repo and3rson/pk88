@@ -6626,6 +6626,30 @@
     )
   )
 
+  (symbol (lib_id "Mechanical:MountingHole") (at 115.57 248.92 0) (unit 1)
+    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (uuid 72305faf-d523-4c0e-97c3-13c1e602c122)
+    (property "Reference" "H4" (at 118.745 247.65 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "MountingHole" (at 118.745 250.19 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "footprints:Hole_3.5x5" (at 115.57 248.92 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (at 115.57 248.92 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (instances
+      (project "main"
+        (path "/590a4a95-7c0e-40dd-8637-8ee29cb6972a"
+          (reference "H4") (unit 1)
+        )
+      )
+    )
+  )
+
   (symbol (lib_id "power:+5V") (at 280.67 215.9 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 72315b81-aef5-4f60-aba9-d9aff2e80384)
