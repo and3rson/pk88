@@ -1038,11 +1038,15 @@ lcd_scrollup_full:
         global  lcd_scroll_part
 lcd_scroll_part:
         push    ax
+        push    cx
         push    di
         push    es
 
-        mov     ax, BDA_SEG
-        mov     es, ax
+        ; Save number of lines to scroll
+        mov     ah, al
+
+        mov     di, BDA_SEG
+        mov     es, di
 
         ; Read line part into buffer
         call    cmd_set_addr_pointer_xy
@@ -1055,7 +1059,7 @@ lcd_scroll_part:
         inc     di
         inc     cl
         cmp     cl, dl
-        jne     .readchar
+        jbe     .readchar
         call    cmd_auto_reset
         pop     cx
 
@@ -1068,7 +1072,7 @@ lcd_scroll_part:
         call    autowrite
         inc     cl
         cmp     cl, dl
-        jne     .clearchar
+        jbe     .clearchar
         call    cmd_auto_reset
         pop     cx
 
@@ -1076,29 +1080,27 @@ lcd_scroll_part:
         test    bl, bl
         jnz     .down
 .up:
-        add     ch, al
+        sub     ch, ah
+        jc      .end
+        jmp     .writedest
+.down:
+        add     ch, ah
         cmp     ch, 7
         jbe     .writedest
-        jmp     .end
-.down:
-        sub     ch, al
-        jc      .end
 
 .writedest:
         ; Write line part from buffer
         call    cmd_set_addr_pointer_xy
         mov     di, BDA_LCD_TMP_BUF
         call    cmd_autowrite_on
-        push    cx
 .writechar:
         mov     al, [es:di]
         call    autowrite
         inc     di
         inc     cl
         cmp     cl, dl
-        jne     .writechar
+        jbe     .writechar
         call    cmd_auto_reset
-        pop     cx
 
 .end:
         ; Restore cursor & addr pointer
@@ -1107,6 +1109,7 @@ lcd_scroll_part:
 
         pop     es
         pop     di
+        pop     cx
         pop     ax
         ret
 

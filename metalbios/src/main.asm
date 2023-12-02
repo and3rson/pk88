@@ -180,6 +180,30 @@ init:
 ;
 ;         jmp     .read_kb
 
+;         mov     ch, 0
+;         mov     cl, 0
+; .printch:
+;         mov     al, ch
+;         add     al, '0'
+;         mov     ah, 0x0E
+;         int     0x10
+;         inc     cl
+;         cmp     cl, 40
+;         jne     .printch
+;         mov     cl, 0
+;         inc     ch
+;         cmp     ch, 7
+;         jne     .printch
+;
+;         ; Scroll screen up by 1 line (lines 3-4, columns 10-20)
+;         mov     ax, 0x0601
+;         mov     cx, 0x030A
+;         mov     dx, 0x0414
+;         int     0x10
+;
+;         jmp     $
+
+
         ; https://thestarman.pcministry.com/asm/mbr/95BMEMBR.htm
         ; Load bootsector
         xor     ax, ax

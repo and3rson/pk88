@@ -206,6 +206,9 @@ set_display_page:
 ;   DH - end Y
 ;   DL - end X
 scroll_screen_up:
+        test    al, al
+        jz      .no_scroll
+
         push    bx
         push    cx
 
@@ -219,6 +222,8 @@ scroll_screen_up:
 
         pop     cx
         pop     bx
+
+.no_scroll:
         clc
         ret
 
@@ -226,12 +231,16 @@ scroll_screen_up:
 ; Function 07h: Scroll screen down
 ; --------------------------------------------------
 ; Args:
+;   AL - number of lines to scroll
 ;   BH - attribute to fill with (background color & foreground color, ignored)
 ;   CH - start Y
 ;   CL - start X
 ;   DH - end Y
 ;   DL - end X
 scroll_screen_down:
+        test    al, al
+        jz      .no_scroll
+
         push    bx
         push    cx
 
@@ -247,6 +256,8 @@ scroll_screen_down:
 
         pop     cx
         pop     bx
+
+.no_scroll:
         clc
         ret
 
