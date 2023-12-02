@@ -161,17 +161,19 @@ init:
 ;
 ;         xor     ah, ah
 ;         int     0x16
-;
-;         cmp     al, 'c'
-;         jne     .not_c
-;         mov     al, 13
-;         jmp     .done
-; .not_c:
-;         cmp     al, 'r'
-;         jne     .not_r
-;         mov     al, 10
-;         jmp     .done
-; .not_r:
+;         call    lcd_printword
+;         jmp     .read_kb
+; ;
+; ;         cmp     al, 'c'
+; ;         jne     .not_c
+; ;         mov     al, 13
+; ;         jmp     .done
+; ; .not_c:
+; ;         cmp     al, 'r'
+; ;         jne     .not_r
+; ;         mov     al, 10
+; ;         jmp     .done
+; ; .not_r:
 ;
 ; .done:
 ;         ; call    lcd_printword
