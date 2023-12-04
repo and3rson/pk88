@@ -10,10 +10,14 @@ SRC = $(shell find $(SRCDIR) -name '*.asm')
 OBJ = $(patsubst %.asm,%.o,$(SRC))
 DEPS = $(shell find $(INCDIR) -name '*.inc') $(MAKEFILE_LIST) $(LDCONFIG)
 
-ASFLAGS = -i $(INCDIR) -f elf -g -F dwarf -w+gnu-elf-extensions
+# nasm flags
+# ASFLAGS = -i $(INCDIR) -f elf -g -F dwarf -w+gnu-elf-extensions -w+orphan-labels
+# yasm flags
+ASFLAGS = -i $(INCDIR) -f elf -g dwarf2 -w+gnu-elf-extensions -w+orphan-labels
 LDFLAGS = -m elf_i386 -T $(LDCONFIG)
 
-AS = nasm
+# AS = nasm
+AS = yasm
 LD = ld
 OBJCOPY = objcopy
 

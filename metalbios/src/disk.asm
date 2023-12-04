@@ -38,7 +38,7 @@ disk_chs_to_lba:
 
         ; AX = cylinder
         xchg    ch, cl          ; CX = 98xxxxxx 76543210
-        and     ch, 0b11000000  ; CX = 98000000 76543210
+        and     ch, 11000000b   ; CX = 98000000 76543210
         ror     ch, 1
         ror     ch, 1
         ror     ch, 1

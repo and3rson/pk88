@@ -30,6 +30,7 @@ RCTRL           equ     0x114
 
 CTL_BRK         equ     0x2E03  ; Scan code (set 1)
 
+type    KEYMAP  object
 KEYMAP:
         ; This basically maps scan codes that come from PS/2 keyboard (set 2) into BIOS scan codes (set 1).
         ; Basic codes
@@ -78,6 +79,7 @@ KEYMAP:
         dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
         dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 
+type    KEYMAP_CTRLED   object
 KEYMAP_CTRLED:
         ; Basic codes
         ;               F9              F5      F3      F1      F2      F12                     F10     F8      F6      F4      TAB     `
@@ -123,6 +125,7 @@ KEYMAP_CTRLED:
         dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
         dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,         0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 
+type    KEYMAP_SHIFTED  object
 KEYMAP_SHIFTED:
         ; Basic codes
         ;               F9              F5      F3      F1      F2      F12                     F10     F8      F6      F4      TAB     `
@@ -214,7 +217,9 @@ keyboard_process:
         mov     es, bx
 
         cmp     al, 0xAA        ; Is BAT code?
-        je      .done           ; Ignore
+        jne     .not_bat
+        jmp     .done           ; Ignore
+.not_bat:
         cmp     al, 0xF0        ; Is break code marker?
         je      .set_break      ; Set break flag
         cmp     al, 0xE0        ; Is extended code marker?

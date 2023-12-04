@@ -77,7 +77,7 @@ interrupt_init:
         ; https://www.geeksforgeeks.org/command-words-of-8259-pic/
 
         ; ICW1
-        mov     al, 0b00010111
+        mov     al, 00010111b
         ; 0 0 0 1 0 1 1 1
         ; ^ ^ ^ ^ ^ ^ ^ ^
         ; | | | | | | | |
@@ -90,11 +90,11 @@ interrupt_init:
         out     PIC_A0, al
 
         ; ICW2
-        mov     al, 0b00001000  ; IRQ0 = INT 0x08 (D7..D3 = T7..T3)
+        mov     al, 00001000b   ; IRQ0 = INT 0x08 (D7..D3 = T7..T3)
         out     PIC_A1, al
 
         ; ICW4
-        mov     al, 0b00000011
+        mov     al, 00000011b
         ; 0 0 0 0 0 X 1 1
         ; ^ ^ ^ ^ ^ ^ ^ ^
         ; | | | | | | | |

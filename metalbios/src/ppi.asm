@@ -33,7 +33,7 @@ ppi_init:
         push    ax
         push    es
 
-        mov     al, 0b1_0110_000  ; Port A: input (mode 1, strobed), port B: output (mode 0)
+        mov     al, 1_0110_000b         ; Port A: input (mode 1, strobed), port B: output (mode 0)
         ; 1 X X X X X X X
         ; ^ ^ ^ ^ ^ ^ ^ ^
         ; | | | | | | | |
@@ -49,7 +49,7 @@ ppi_init:
         out     PPI_CTL, al
 
         ; Enable interrupts for port A by writing 1 to port C bit 4
-        mov     al, 0b0_000_100_1
+        mov     al, 0_000_100_1b
         ; 0 - - - X X X X
         ; ^ ^ ^ ^ ^ ^ ^ ^
         ; | | | | | | | |

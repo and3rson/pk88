@@ -13,7 +13,7 @@
 
         %include "ports.inc"
 
-SDC_HEADER      equ     0b01000000
+SDC_HEADER      equ     01000000b
 
         section .text
 
@@ -32,26 +32,26 @@ sdc_init:
         push    bx      ; Clobbered by read
         push    cx
 
-        mov     al, 0b00000000
+        mov     al, 00000000b
         out     UA_MCR, al
-        mov     al, 0b11111111
+        mov     al, 11111111b
         out     UA_MCR, al
-        mov     al, 0b00000000
+        mov     al, 00000000b
         out     UA_MCR, al
-        mov     al, 0b11111111
+        mov     al, 11111111b
         out     UA_MCR, al
 
-        mov     al, 0b00001101  ; MOSI=0, /CS=1, SCK=0
+        mov     al, 00001101b   ; MOSI=0, /CS=1, SCK=0
         out     UA_MCR, al
 
         ; Reset SD card
-        mov     al, 0b00000001  ; MOSI=1, /CS=1, SCK=0
+        mov     al, 00000001b   ; MOSI=1, /CS=1, SCK=0
         out     UA_MCR, al
         mov     cx, 80  ; Sent 80 clock pulses
 .loop:
-        and     al, 0b11111110  ; SCK = 1
+        and     al, 11111110b   ; SCK = 1
         out     UA_MCR, al
-        or      al, 0b00000001  ; SCK = 0
+        or      al, 00000001b   ; SCK = 0
         out     UA_MCR, al
         loop    .loop
 
@@ -260,8 +260,8 @@ sdc_write_single_block:
 
         ; Read data response
         call    wait_byte
-        and     al, 0b00011111
-        cmp     al, 0b00000101
+        and     al, 00011111b
+        cmp     al, 00000101b
         jne     .data_not_accepted
 
         ; Wait for card to finish writing
@@ -328,7 +328,7 @@ cmd58_read_ocr:
         call    write
         call    write
         call    write
-        mov     al, 0b01110101  ; CRC and stop bit
+        mov     al, 01110101b   ; CRC and stop bit
         call    write
 
         pop     ax
@@ -355,7 +355,7 @@ cmd41_send_op_cond:
 
         mov     al, 41 | SDC_HEADER
         call    write
-        mov     al, 0b01000000  ; arguments
+        mov     al, 01000000b   ; arguments
         call    write
         mov     al, 0
         call    write
@@ -471,7 +471,7 @@ enable:
         push    ax
 
         in      al, UA_MCR
-        or      al, 0b00000010  ; Enable
+        or      al, 00000010b   ; Enable
         out     UA_MCR, al
 
         pop     ax
@@ -484,7 +484,7 @@ disable:
         push    ax
 
         in      al, UA_MCR
-        and     al, 0b11111101  ; Disable
+        and     al, 11111101b   ; Disable
         out     UA_MCR, al
 
         pop     ax
@@ -557,20 +557,20 @@ write:
 
         mov     cx, 8
         mov     bl, al
-        mov     al, 0b00001111  ; 7..3 = 0, 2 = MOSI, 1 = /CS, 0 = SCK
+        mov     al, 00001111b   ; 7..3 = 0, 2 = MOSI, 1 = /CS, 0 = SCK
 .next:
         rol     bl, 1
         jc      .set1
 .set0:
-        or      al, 0b00000100  ; MOSI = 0
+        or      al, 00000100b   ; MOSI = 0
         jmp     .setok
 .set1:
-        and     al, 0b11111011  ; MOSI = 1
+        and     al, 11111011b   ; MOSI = 1
 .setok:
         out     UA_MCR, al      ; Write MOSI
-        and     al, 0b11111110  ; SCK = 1
+        and     al, 11111110b   ; SCK = 1
         out     UA_MCR, al      ; Write SCK
-        or      al, 0b00000001  ; SCK = 0
+        or      al, 00000001b   ; SCK = 0
         out     UA_MCR, al      ; Write SCK
 
         loop    .next
@@ -593,7 +593,7 @@ read:
         mov     cx, 8
         xor     bl, bl
 .next:
-        mov     al, 0b00001010  ; SCK = 1
+        mov     al, 00001010b   ; SCK = 1
         out     UA_MCR, al      ; Write SCK
         in      al, UA_MSR      ; Read MISO
 
@@ -611,14 +611,14 @@ read:
         ; Total for 1: 3 + 16 + 2 + 1 = 22
 
         ; New approach
-        and     al, 0b00010000  ; MISO                          ; 3
+        and     al, 00010000b   ; MISO                          ; 3
         add     al, 0xFF        ; Set CF if MISO = 0            ; 4
         cmc                     ; Flip CF                       ; 2
         rcl     bl, 1                                           ; 2
         ; Total: 3 + 4 + 2 + 2 = 11
 
         ; Read end
-        mov     al, 0b00001011  ; SCK = 0
+        mov     al, 00001011b   ; SCK = 0
         out     UA_MCR, al      ; Write SCK
 
         loop    .next
