@@ -27,7 +27,7 @@
         %endrep
 %endmacro
 
-type    CHAR_DATA       object
+; type    CHAR_DATA       object
 CHAR_DATA:
 ; 0x80 - Trident
         db 00100b
