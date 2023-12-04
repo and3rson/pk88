@@ -25,6 +25,7 @@
         extern  int13h_isr
         extern  int16h_isr
         extern  int1Ch_isr
+        extern  int88h_isr
         extern  lcd_printbyte
 
         section .rodata
@@ -64,6 +65,11 @@ interrupt_init:
         ; Loop
         cmp     cx, isr_handlers_len
         jne     .next
+
+        ; Set INT 0x88 ISR
+        mov     bx, int88h_isr
+        mov     [0x88 * 4], bx
+        mov     [0x88 * 4 + 2], cs
 
         ; Initialize 8259 PIC
         ; https://www.geeksforgeeks.org/command-words-of-8259-pic/
