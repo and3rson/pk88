@@ -9,9 +9,6 @@
         cpu     8086
         bits    16
 
-        %include "ports.inc"
-        %include "sys.inc"
-
         extern  keyboard_process
 
         section .text
@@ -21,6 +18,8 @@
 ; --------------------------------------------------
         global  irq1h_isr
 irq1h_isr:
+        ; Keyboard controller has PS/2 byte available
+
         call    keyboard_process
 
         iret
