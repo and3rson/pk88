@@ -24,6 +24,7 @@
         extern  int12h_isr
         extern  int13h_isr
         extern  int16h_isr
+        extern  int1Bh_isr
         extern  int1Ch_isr
         extern  int88h_isr
         extern  lcd_printbyte
@@ -141,7 +142,7 @@ isr_handlers:
         dw      isr_stub18      ; 0x18 - Execute Casette BASIC
         dw      isr_stub19      ; 0x19 - Soft reboot
         dw      isr_stub1A      ; 0x1A - RTC services
-        dw      isr_stub1B      ; 0x1B - CTRL-Break handler
+        dw      int1Bh_isr      ; 0x1B - CTRL-Break handler
         dw      int1Ch_isr      ; 0x1C - Timer tick handler (called by INT 0x08)
         dw      isr_stub1D      ; 0x1D - Reserved (pointer to Video Parameter Table)
         dw      isr_stub1E      ; 0x1E - Reserved (pointer to Diskette Parameter Table)

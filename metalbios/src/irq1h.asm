@@ -18,17 +18,19 @@
 
         section .rodata
 
-FLAG_BREAK      equ     0x01
+FLAG_BREAK      equ     0x01    ; Flag bits
 FLAG_EXT        equ     0x02
 
-MOD_SHIFT       equ     0x01
+MOD_SHIFT       equ     0x01    ; Modifier bits
 MOD_CTRL        equ     0x02
 
-LSHIFT          equ     0x12
+LSHIFT          equ     0x12    ; Scan codes (set 2)
 RSHIFT          equ     0x59
 
-LCTRL           equ     0x14
+LCTRL           equ     0x14    ; Scan codes (set 2)
 RCTRL           equ     0x114
+
+CTL_BRK         equ     0x2E03  ; Scan code (set 1)
 
 KEYMAP:
         ; This basically maps scan codes that come from PS/2 keyboard (set 2) into BIOS scan codes (set 1).
@@ -85,7 +87,7 @@ KEYMAP_CTRLED:
         ;               LALT    LSHIFT          LCTRL   Q       1                                       Z       S       A       W       2
         dw      0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1011, 0x0000, 0x0000,         0x0000, 0x0000, 0x2C1A, 0x1F13, 0x1E01, 0x1117, 0x0300, 0x0000
         ;               C       X       D       E       4       3                               SPACE   V       F       T       R       5
-        dw      0x0000, 0x2E03, 0x2D18, 0x2004, 0x1205, 0x0000, 0x0000, 0x0000,         0x0000, 0x3920, 0x2F16, 0x2106, 0x1414, 0x1312, 0x0000, 0x0000
+        dw      0x0000, CTL_BRK,0x2D18, 0x2004, 0x1205, 0x0000, 0x0000, 0x0000,         0x0000, 0x3920, 0x2F16, 0x2106, 0x1414, 0x1312, 0x0000, 0x0000
         ;               N       B       H       G       Y       6                                       M       J       U       7       8
         dw      0x0000, 0x310E, 0x3002, 0x2308, 0x2207, 0x1519, 0x071E, 0x0000,         0x0000, 0x0000, 0x320D, 0x240A, 0x1615, 0x0000, 0x0000, 0x0000
         ;               ,       K       I       O       0       9                               .       /       L       ;       P       -
@@ -237,6 +239,10 @@ irq1h_isr:
         jmp     .store
 .ctrled:
         mov     ax, [es:KEYMAP_CTRLED + bx]
+        ; Is this a ctrl-break?
+        cmp     ax, CTL_BRK
+        jne     .store
+        int     0x1B            ; Call BIOS INT 1Bh handler
         jmp     .store
 .shifted:
         mov     ax, [es:KEYMAP_SHIFTED + bx]
