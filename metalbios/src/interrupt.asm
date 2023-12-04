@@ -24,6 +24,7 @@
         extern  int12h_isr
         extern  int13h_isr
         extern  int16h_isr
+        extern  int19h_isr
         extern  int1Bh_isr
         extern  int1Ch_isr
         extern  int88h_isr
@@ -140,7 +141,7 @@ isr_handlers:
         dw      int16h_isr      ; 0x16 - Keyboard services
         dw      isr_stub17      ; 0x17 - Printer services
         dw      isr_stub18      ; 0x18 - Execute Casette BASIC
-        dw      isr_stub19      ; 0x19 - Soft reboot
+        dw      int19h_isr      ; 0x19 - Boot/reboot system, called after POST
         dw      isr_stub1A      ; 0x1A - RTC services
         dw      int1Bh_isr      ; 0x1B - CTRL-Break handler
         dw      int1Ch_isr      ; 0x1C - Timer tick handler (called by INT 0x08)
