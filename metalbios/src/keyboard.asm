@@ -179,7 +179,7 @@ KEYMAP_SHIFTED:
         global  keyboard_init
 keyboard_init:
         push    ax
-        psuh    es
+        push    es
 
         ; Init keyboard buffers
         mov     ax, BDA_SEG
@@ -268,9 +268,9 @@ keyboard_process:
 .ctrled:
         mov     ax, [es:KEYMAP_CTRLED + bx]
         ; Is this a ctrl-break?
-        cmp     ax, CTL_BRK
-        jne     .store
-        int     0x1B            ; Call BIOS INT 1Bh handler
+        ; cmp     ax, CTL_BRK
+        ; jne     .store
+        ; int     0x1B            ; Call BIOS INT 1Bh handler
         jmp     .store
 .shifted:
         mov     ax, [es:KEYMAP_SHIFTED + bx]
@@ -318,4 +318,4 @@ keyboard_process:
         pop     bx
         pop     ax
 
-        iret
+        ret
