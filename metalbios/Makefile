@@ -12,13 +12,13 @@ OBJ = $(patsubst %.asm,%.o,$(SRC))
 INCLUDES = $(shell find $(INCDIR) -name '*.inc')
 
 # nasm flags
-ASFLAGS = -i $(INCDIR) -f elf -g -F dwarf -w+gnu-elf-extensions -w+orphan-labels
+# ASFLAGS = -i $(INCDIR) -f elf -g -F dwarf -w+gnu-elf-extensions -w+orphan-labels
 # yasm flags
-# ASFLAGS = -i $(INCDIR) -f elf -g dwarf2 -w+gnu-elf-extensions -w+orphan-labels
+ASFLAGS = -i $(INCDIR) -f elf -g dwarf2 -Werror -Worphan-labels
 LDFLAGS = -m elf_i386 -T $(LDCONFIG)
 
-AS = nasm
-# AS = yasm
+# AS = nasm
+AS = yasm
 LD = ld
 OBJCOPY = objcopy
 

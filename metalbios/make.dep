@@ -1,0 +1,30 @@
+src/int14h.o: src/int14h.asm include/bda.inc include/macros.inc
+src/int03h.o: src/int03h.asm
+src/uart.o: src/uart.asm include/ports.inc
+src/int13h.o: src/int13h.asm include/bda.inc include/sys.inc \
+ include/disk.inc include/macros.inc
+src/ppi.o: src/ppi.asm include/ports.inc include/bda.inc
+src/sdcard.o: src/sdcard.asm include/ports.inc
+src/timer.o: src/timer.asm include/sys.inc include/ports.inc
+src/main.o: src/main.asm include/sys.inc include/ports.inc \
+ include/bda.inc
+src/int1Ch.o: src/int1Ch.asm include/macros.inc
+src/memtest.o: src/memtest.asm
+src/irq1h.o: src/irq1h.asm
+src/int88h.o: src/int88h.asm
+src/disk.o: src/disk.asm include/disk.inc
+src/keyboard.o: src/keyboard.asm include/sys.inc include/ports.inc \
+ include/bda.inc
+src/int12h.o: src/int12h.asm include/macros.inc
+src/interrupt.o: src/interrupt.asm include/sys.inc include/ports.inc \
+ include/macros.inc
+src/irq0h.o: src/irq0h.asm
+src/int10h.o: src/int10h.asm include/bda.inc include/macros.inc
+src/lcd4008.o: src/lcd4008.asm include/sys.inc include/ports.inc \
+ include/bda.inc
+src/int1Bh.o: src/int1Bh.asm include/macros.inc
+src/int18h.o: src/int18h.asm include/sys.inc
+src/int16h.o: src/int16h.asm include/bda.inc include/sys.inc \
+ include/macros.inc
+src/int19h.o: src/int19h.asm
+src/int11h.o: src/int11h.asm include/macros.inc include/bda.inc
