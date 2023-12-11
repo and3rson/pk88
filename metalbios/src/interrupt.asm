@@ -32,6 +32,7 @@
 
         section .rodata
 
+type    STUB_S  object
 STUB_S  db      "!0x", 0
 
         section .text

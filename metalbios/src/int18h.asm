@@ -13,6 +13,7 @@
 
         section .rodata
 
+type    BASIC_S object
 BASIC_S db      "BASIC STUB", 0
 
         section .text

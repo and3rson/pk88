@@ -22,6 +22,7 @@
 
         section .rodata
 
+type    STUB_S  object
 STUB_S  db      "!0x13:", 0
 
         section .text

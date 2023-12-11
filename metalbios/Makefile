@@ -14,7 +14,7 @@ INCLUDES = $(shell find $(INCDIR) -name '*.inc')
 # nasm flags
 # ASFLAGS = -i $(INCDIR) -f elf -g -F dwarf -w+gnu-elf-extensions -w+orphan-labels
 # yasm flags
-ASFLAGS = -i $(INCDIR) -f elf -g dwarf2 -Werror -Worphan-labels
+ASFLAGS = -i $(INCDIR) -f elf -Werror -Worphan-labels
 LDFLAGS = -m elf_i386 -T $(LDCONFIG)
 
 # AS = nasm
@@ -33,16 +33,16 @@ $(DEPFILE): $(SRC) $(INCLUDES)
 $(TARGET): $(ELF)
 	$(OBJCOPY) -O binary $< $@
 
-$(ELF): $(OBJ) | $(LDCONFIG)
+$(ELF): $(OBJ) $(LDCONFIG)
 	@mkdir -p $(DESTDIR)
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) $(LDFLAGS) -o $@ $(OBJ)
 
-$(SRCDIR)/%.o: $(SRCDIR)/%.asm | $(DEPFILE)
+$(SRCDIR)/%.o: $(SRCDIR)/%.asm
 	$(AS) $(ASFLAGS) $< -o $@
 
 .PHONY: disasm
 disasm: $(TARGET)
-	unbuffer objdump -Sdr $(ELF) -M i8086,intel | less -R
+	unbuffer objdump -Sdr $(ELF) -j .rodata -j .text -M i8086,intel | less -R
 
 .PHONY: clean
 clean:
